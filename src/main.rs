@@ -115,7 +115,7 @@ impl Chip8 {
 
     fn tick(&mut self) {
         let opcode = self.fetch();
-        trace!("{:04X}: {:04X}", self.pc, opcode);
+        trace!("[{:04X}] {:04X}", self.pc, opcode);
         self.run_opcode(opcode);
     }
 
