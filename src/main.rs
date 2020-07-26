@@ -185,13 +185,45 @@ impl Chip8 {
         );
         let nnn = (opcode & 0xFFF) as usize;
         let kk = (opcode & 0xFF) as u8;
-        let x = nibbles.1;
-        let y = nibbles.1;
-        let n = nibbles.1;
+        let x = nibbles.1 as usize;
+        let y = nibbles.2 as usize;
+        let n = nibbles.3 as usize;
 
         let pc = match nibbles {
             (0x00, 0x00, 0x0E, 0x00) => self.op_00e0(),
             (0x00, 0x00, 0x0E, 0x0E) => self.op_00ee(),
+            (0x01, _, _, _) => self.op_1nnn(nnn),
+            (0x02, _, _, _) => self.op_2nnn(nnn),
+            (0x03, _, _, _) => self.op_3xkk(x, kk),
+            (0x04, _, _, _) => self.op_4xkk(x, kk),
+            (0x05, _, _, 0x00) => self.op_5xy0(x, y),
+            (0x06, _, _, _) => self.op_6xkk(x, kk),
+            (0x07, _, _, _) => self.op_7xkk(x, kk),
+            (0x08, _, _, 0x00) => self.op_8xy0(x, y),
+            (0x08, _, _, 0x01) => self.op_8xy1(x, y),
+            (0x08, _, _, 0x02) => self.op_8xy2(x, y),
+            (0x08, _, _, 0x03) => self.op_8xy3(x, y),
+            (0x08, _, _, 0x04) => self.op_8xy4(x, y),
+            (0x08, _, _, 0x05) => self.op_8xy5(x, y),
+            (0x08, _, _, 0x06) => self.op_8x06(x),
+            (0x08, _, _, 0x07) => self.op_8xy7(x, y),
+            (0x08, _, _, 0x0e) => self.op_8x0e(x),
+            (0x09, _, _, 0x00) => self.op_9xy0(x, y),
+            (0x0A, _, _, _) => self.op_annn(nnn),
+            (0x0B, _, _, _) => self.op_bnnn(nnn),
+            (0x0C, _, _, _) => self.op_cxkk(x, kk),
+            (0x0D, _, _, _) => self.op_dxyn(x, y, n),
+            (0x0E, _, 0x09, 0x0E) => self.op_ex9e(x),
+            (0x0E, _, 0x0A, 0x01) => self.op_exa1(x),
+            (0x0F, _, 0x00, 0x07) => self.op_fx07(x),
+            (0x0F, _, 0x00, 0x0A) => self.op_fx0a(x),
+            (0x0F, _, 0x01, 0x05) => self.op_fx15(x),
+            (0x0F, _, 0x01, 0x08) => self.op_fx18(x),
+            (0x0F, _, 0x01, 0x0E) => self.op_fx1e(x),
+            (0x0F, _, 0x02, 0x09) => self.op_fx29(x),
+            (0x0F, _, 0x03, 0x03) => self.op_fx33(x),
+            (0x0F, _, 0x05, 0x05) => self.op_fx55(x),
+            (0x0F, _, 0x06, 0x05) => self.op_fx65(x),
             _ => panic!("{:04X}: {:04x} is invalid opcode", self.pc, opcode)
         };
 
@@ -215,6 +247,134 @@ impl Chip8 {
 
     // RET: Return from a subroutine
     fn op_00ee(&self) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_1nnn(&self, nnn: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_2nnn(&self, nnn: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_3xkk(&self, x: usize, kk: u8) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_4xkk(&self, x: usize, kk: u8) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_5xy0(&self, x: usize, y: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_6xkk(&self, x: usize, kk: u8) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_7xkk(&self, x: usize, kk: u8) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_8xy0(&self, x: usize, y: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_8xy1(&self, x: usize, y: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_8xy2(&self, x: usize, y: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_8xy3(&self, x: usize, y: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_8xy4(&self, x: usize, y: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_8xy5(&self, x: usize, y: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_8x06(&self, x: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_8xy7(&self, x: usize, y: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_8x0e(&self, x: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_9xy0(&self, x: usize, y: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_annn(&self, nnn: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_bnnn(&self, nnn: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_cxkk(&self, x: usize, kk: u8) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_dxyn(&self, x: usize, y: usize, n: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_ex9e(&self, x: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_exa1(&self, x: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_fx07(&self, x: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_fx0a(&self, x: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_fx15(&self, x: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_fx18(&self, x: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_fx1e(&self, x: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_fx29(&self, x: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_fx33(&self, x: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_fx55(&self, x: usize) -> Pc {
+        self.op_not_impl()
+    }
+
+    fn op_fx65(&self, x: usize) -> Pc {
         self.op_not_impl()
     }
 }
