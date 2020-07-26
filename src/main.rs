@@ -1,9 +1,10 @@
 use std::env;
 use std::fs::File;
-use std::io::Read;
+use std::io::{Read, Write, stdout};
 
 #[macro_use] extern crate log;
 use log4rs;
+use termion;
 
 const FONT_SET: [u8; 80] = [
     0xF0,
@@ -153,6 +154,12 @@ impl Chip8 {
         f.read(&mut self.ram[0x200..]).unwrap();
     }
 
+    fn clear(&self) {
+        let mut stdout = stdout();
+        write!(stdout, "{}{}", termion::clear::All, termion::cursor::Goto(1, 1)).unwrap();
+        stdout.flush().unwrap();
+    }
+
     fn run(&mut self) {
         loop {
             self.tick();
@@ -161,6 +168,7 @@ impl Chip8 {
 
     fn tick(&mut self) {
         let opcode = self.fetch();
+        trace!("{:04X}: {:04X}", self.pc, opcode);
         self.run_opcode(opcode);
     }
 
@@ -182,7 +190,8 @@ impl Chip8 {
         let n = nibbles.1;
 
         let pc = match nibbles {
-            (0x00, 0x00, 0x0E, 0x00) => self.op_00E0(),
+            (0x00, 0x00, 0x0E, 0x00) => self.op_00e0(),
+            (0x00, 0x00, 0x0E, 0x0E) => self.op_00ee(),
             _ => panic!("{:04X}: {:04x} is invalid opcode", self.pc, opcode)
         };
 
@@ -193,8 +202,20 @@ impl Chip8 {
         }
     }
 
-    fn op_00E0(&self) -> Pc{
+    fn op_not_impl(&self) -> Pc {
+        error!("Not implemented yet");
         Pc::Inc
+    }
+
+    // CLS: Clear the display
+    fn op_00e0(&self) -> Pc {
+        self.clear();
+        Pc::Inc
+    }
+
+    // RET: Return from a subroutine
+    fn op_00ee(&self) -> Pc {
+        self.op_not_impl()
     }
 }
 
