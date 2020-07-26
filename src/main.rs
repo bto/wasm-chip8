@@ -4,6 +4,7 @@ use std::io::{Read, Write, stdout};
 
 #[macro_use] extern crate log;
 use log4rs;
+use rand;
 use termion;
 
 const FONT_SET: [u8; 80] = [
@@ -104,6 +105,16 @@ enum Pc {
     Jump(usize),
 }
 
+impl Pc {
+    fn skip_if(cond: bool) -> Pc {
+        if cond {
+            Pc::Skip
+        } else {
+            Pc::Inc
+        }
+    }
+}
+
 struct Chip8 {
     // 4KB of RAM
     ram: [u8; 0xFFF],
@@ -192,6 +203,7 @@ impl Chip8 {
         let pc = match nibbles {
             (0x00, 0x00, 0x0E, 0x00) => self.op_00e0(),
             (0x00, 0x00, 0x0E, 0x0E) => self.op_00ee(),
+            (0x00, _, _, _) => self.op_0nnn(nnn),
             (0x01, _, _, _) => self.op_1nnn(nnn),
             (0x02, _, _, _) => self.op_2nnn(nnn),
             (0x03, _, _, _) => self.op_3xkk(x, kk),
@@ -246,136 +258,207 @@ impl Chip8 {
     }
 
     // RET: Return from a subroutine
-    fn op_00ee(&self) -> Pc {
-        self.op_not_impl()
+    fn op_00ee(&mut self) -> Pc {
+        self.sp -= 1;
+        Pc::Jump(self.stack[self.sp])
     }
 
+    // SYS addr: Jump to a machine code routine at nnn
+    fn op_0nnn(&self, nnn: usize) -> Pc {
+        Pc::Jump(nnn)
+    }
+
+    // JP addr: Jump to location nnn
     fn op_1nnn(&self, nnn: usize) -> Pc {
-        self.op_not_impl()
+        Pc::Jump(nnn)
     }
 
-    fn op_2nnn(&self, nnn: usize) -> Pc {
-        self.op_not_impl()
+    // CALL addr: Call subroutine at nnn
+    fn op_2nnn(&mut self, nnn: usize) -> Pc {
+        self.stack[self.sp] = self.pc + 2;
+        self.sp += 1;
+        Pc::Jump(nnn)
     }
 
+    // SE Vx, byte: Skip next instruction if Vx = kk
     fn op_3xkk(&self, x: usize, kk: u8) -> Pc {
-        self.op_not_impl()
+        Pc::skip_if(self.v[x] == kk)
     }
 
+    // SNE Vx, byte: Skip next instruction if Vx != kk
     fn op_4xkk(&self, x: usize, kk: u8) -> Pc {
-        self.op_not_impl()
+        Pc::skip_if(self.v[x] != kk)
     }
 
+    // SE Vx, Vy: Skip next instruction if Vx = Vy
     fn op_5xy0(&self, x: usize, y: usize) -> Pc {
-        self.op_not_impl()
+        Pc::skip_if(self.v[x] == self.v[y])
     }
 
-    fn op_6xkk(&self, x: usize, kk: u8) -> Pc {
-        self.op_not_impl()
+    // LD Vx, byte: Set Vx = kk
+    fn op_6xkk(&mut self, x: usize, kk: u8) -> Pc {
+        self.v[x] = kk;
+        Pc::Inc
     }
 
-    fn op_7xkk(&self, x: usize, kk: u8) -> Pc {
-        self.op_not_impl()
+    // ADD Vx, byte: Set Vx = Vx + kk
+    fn op_7xkk(&mut self, x: usize, kk: u8) -> Pc {
+        self.v[x] = (self.v[x] as u16 + kk as u16) as u8;
+        Pc::Inc
     }
 
-    fn op_8xy0(&self, x: usize, y: usize) -> Pc {
-        self.op_not_impl()
+    // LD Vx, Vy: Set Vx = Vy
+    fn op_8xy0(&mut self, x: usize, y: usize) -> Pc {
+        self.v[x] = self.v[y];
+        Pc::Inc
     }
 
-    fn op_8xy1(&self, x: usize, y: usize) -> Pc {
-        self.op_not_impl()
+    // OR Vx, Vy: Set Vx = Vx OR Vy
+    fn op_8xy1(&mut self, x: usize, y: usize) -> Pc {
+        self.v[x] |= self.v[y];
+        Pc::Inc
     }
 
-    fn op_8xy2(&self, x: usize, y: usize) -> Pc {
-        self.op_not_impl()
+    // AND Vx, Vy: Set Vx = Vx AND Vy
+    fn op_8xy2(&mut self, x: usize, y: usize) -> Pc {
+        self.v[x] &= self.v[y];
+        Pc::Inc
     }
 
-    fn op_8xy3(&self, x: usize, y: usize) -> Pc {
-        self.op_not_impl()
+    // XOR Vx, Vy: Set Vx = Vx XOR Vy
+    fn op_8xy3(&mut self, x: usize, y: usize) -> Pc {
+        self.v[x] ^= self.v[y];
+        Pc::Inc
     }
 
-    fn op_8xy4(&self, x: usize, y: usize) -> Pc {
-        self.op_not_impl()
+    // ADD Vx, Vy: Set Vx = Vx + Vy, set VF = carry
+    fn op_8xy4(&mut self, x: usize, y: usize) -> Pc {
+        let vx = self.v[x] as u16 + self.v[y] as u16;
+        self.v[x] = vx as u8;
+        self.v[0xF] = (vx >> 8) as u8;
+        Pc::Inc
     }
 
-    fn op_8xy5(&self, x: usize, y: usize) -> Pc {
-        self.op_not_impl()
+    // SUB Vx, Vy: Set Vx = Vx - Vy, set VF = NOT borrow
+    fn op_8xy5(&mut self, x: usize, y: usize) -> Pc {
+        let vx = self.v[x] as i16 - self.v[y] as i16;
+        self.v[x] = vx as u8;
+        self.v[0xF] = !(vx >> 8) as u8;
+        Pc::Inc
     }
 
-    fn op_8x06(&self, x: usize) -> Pc {
-        self.op_not_impl()
+    // SHR Vx{, Vy}: Set Vx = Vx SHR 1
+    fn op_8x06(&mut self, x: usize) -> Pc {
+        self.v[0xF] = self.v[x] & 0x1;
+        self.v[x] >>= 1;
+        Pc::Inc
     }
 
-    fn op_8xy7(&self, x: usize, y: usize) -> Pc {
-        self.op_not_impl()
+    // SUBN Vx, Vy: Set Vx = Vy - Vx, set VF = NOT borrow
+    fn op_8xy7(&mut self, x: usize, y: usize) -> Pc {
+        let vx = self.v[y] as i16 - self.v[x] as i16;
+        self.v[x] = vx as u8;
+        self.v[0xF] = !(vx >> 8) as u8;
+        Pc::Inc
     }
 
-    fn op_8x0e(&self, x: usize) -> Pc {
-        self.op_not_impl()
+    // SHL Vx{, Vy}: Set Vx = Vx SHL 1
+    fn op_8x0e(&mut self, x: usize) -> Pc {
+        self.v[0xF] = self.v[x] >> 7;
+        self.v[x] <<= 1;
+        Pc::Inc
     }
 
+    // SNE Vx, Vy: Skip next instruction if Vx != Vy
     fn op_9xy0(&self, x: usize, y: usize) -> Pc {
-        self.op_not_impl()
+        Pc::skip_if(self.v[x] != self.v[y])
     }
 
-    fn op_annn(&self, nnn: usize) -> Pc {
-        self.op_not_impl()
+    // LD I, addr: Set I = nnn
+    fn op_annn(&mut self, nnn: usize) -> Pc {
+        self.i = nnn;
+        Pc::Inc
     }
 
+    // JP V0, addr: Jump to location nnn + V0
     fn op_bnnn(&self, nnn: usize) -> Pc {
-        self.op_not_impl()
+        Pc::Jump(nnn + self.v[0] as usize)
     }
 
-    fn op_cxkk(&self, x: usize, kk: u8) -> Pc {
-        self.op_not_impl()
+    // RND Vx, byte: Set Vx = random byte AND kk
+    fn op_cxkk(&mut self, x: usize, kk: u8) -> Pc {
+        self.v[x] = rand::random::<u8>() & kk;
+        Pc::Inc
     }
 
+    // DRW Vx, Vy, nibble: Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision
     fn op_dxyn(&self, x: usize, y: usize, n: usize) -> Pc {
         self.op_not_impl()
     }
 
+    // SKP Vx: Skip next instruction if key with the value of Vx is pressed
     fn op_ex9e(&self, x: usize) -> Pc {
         self.op_not_impl()
     }
 
+    // SKNP Vx: Skip next instruction if key with the value of Vx is not pressed
     fn op_exa1(&self, x: usize) -> Pc {
         self.op_not_impl()
     }
 
+    // LD Vx, DT: Set Vx = delay timer value
     fn op_fx07(&self, x: usize) -> Pc {
         self.op_not_impl()
     }
 
+    // LD Vx, K: Wait for a key press, store the value of the key in Vx
     fn op_fx0a(&self, x: usize) -> Pc {
         self.op_not_impl()
     }
 
+    // LD DT, Vx: Set delay timer = Vx
     fn op_fx15(&self, x: usize) -> Pc {
         self.op_not_impl()
     }
 
+    // LD ST, Vx: Set sound timer = Vx
     fn op_fx18(&self, x: usize) -> Pc {
         self.op_not_impl()
     }
 
-    fn op_fx1e(&self, x: usize) -> Pc {
-        self.op_not_impl()
+    // ADD I, Vx: Set I = I + Vx
+    fn op_fx1e(&mut self, x: usize) -> Pc {
+        self.i += self.v[x] as usize;
+        Pc::Inc
     }
 
+    // LD F, Vx: Set I = location of sprite for digit Vx
     fn op_fx29(&self, x: usize) -> Pc {
         self.op_not_impl()
     }
 
-    fn op_fx33(&self, x: usize) -> Pc {
-        self.op_not_impl()
+    // LD B, Vx: Store BCD representation of Vx in memory locations I, I+1 and I+2
+    fn op_fx33(&mut self, x: usize) -> Pc {
+        self.ram[self.i] = self.v[x] / 100;
+        self.ram[self.i + 1] = (self.v[x] / 10) % 10;
+        self.ram[self.i + 2] = self.v[x] % 10;
+        Pc::Inc
     }
 
-    fn op_fx55(&self, x: usize) -> Pc {
-        self.op_not_impl()
+    // LD [I], Vx: Store registers V0 through Vx in memory starting at location I
+    fn op_fx55(&mut self, x: usize) -> Pc {
+        for i in 0..x + 1 {
+            self.ram[self.i + i] = self.v[i];
+        }
+        Pc::Inc
     }
 
-    fn op_fx65(&self, x: usize) -> Pc {
-        self.op_not_impl()
+    // LD Vx, [I]: Load registers V0 through Vx in memory starting at location I
+    fn op_fx65(&mut self, x: usize) -> Pc {
+        for i in 0..x + 1 {
+            self.v[i] = self.ram[self.i + i];
+        }
+        Pc::Inc
     }
 }
 
