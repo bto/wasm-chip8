@@ -92,17 +92,39 @@ fn main() {
     log4rs::init_file("logger.yml", Default::default()).unwrap();
     let mut chip8 = Chip8::new();
     chip8.load();
+    chip8.run();
 }
 
 struct Chip8 {
     // 4KB of RAM
     ram: [u8; 0xFFF],
+
+    // General purpose 8-bit registers
+    v: [u8; 16],
+
+    // Index register
+    i: usize,
+
+    // Stack
+    stack: [usize; 16],
+
+    // Stack pointer
+    sp: usize,
+
+    // Program counter
+    pc: usize,
+
 }
 
 impl Chip8 {
     fn new() -> Self {
         Self {
             ram: [0u8; 0xFFF],
+            v: [0; 16],
+            i: 0,
+            stack: [0; 16],
+            sp: 0,
+            pc: 0x200,
         }
     }
 
@@ -122,6 +144,20 @@ impl Chip8 {
         let mut f = File::open(args[1].as_str()).expect("File not found");
         f.read(&mut self.ram[0x200..]).unwrap();
     }
+
+    fn run(&mut self) {
+        loop {
+            self.tick();
+        }
+    }
+
+    fn tick(&mut self) {
+        let opcode = self.fetch();
+    }
+
+    fn fetch(&self) -> u16 {
+        (self.ram[self.pc] as u16) << 8 | self.ram[self.pc + 1] as u16
+    }
 }
 
 #[cfg(test)]
@@ -132,6 +168,8 @@ mod tests {
     fn test_new() {
         let chip8 = Chip8::new();
         assert_eq!(chip8.ram.len(), 0xFFF);
+        assert_eq!(chip8.v[0], 0);
+        assert_eq!(chip8.pc, 0x200);
     }
 
     #[test]
@@ -141,5 +179,14 @@ mod tests {
         assert_eq!(chip8.ram[0x00], 0xF0);
         assert_eq!(chip8.ram[0x4F], 0x80);
         assert_eq!(chip8.ram[0x50], 0x00);
+    }
+
+    #[test]
+    fn test_fetch() {
+        let mut chip8 = Chip8::new();
+        chip8.ram[0x200] = 0x01;
+        chip8.ram[0x201] = 0x23;
+        let opcode = chip8.fetch();
+        assert_eq!(opcode, 0x0123);
     }
 }
