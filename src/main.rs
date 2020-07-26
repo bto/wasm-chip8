@@ -91,7 +91,7 @@ const FONT_SET: [u8; 80] = [
 fn main() {
     log4rs::init_file("logger.yml", Default::default()).unwrap();
     let mut chip8 = Chip8::new();
-    chip8.load_rom();
+    chip8.load();
 }
 
 struct Chip8 {
@@ -106,15 +106,40 @@ impl Chip8 {
         }
     }
 
-    fn load_rom(&mut self) {
-        // load font set
+    fn load(&mut self) {
+        self.load_fontset();
+        self.load_rom();
+    }
+
+    fn load_fontset(&mut self) {
         for i in 0..FONT_SET.len() {
             self.ram[i] = FONT_SET[i];
         }
+    }
 
-        // load rom file to ram
+    fn load_rom(&mut self) {
         let args: Vec<String> = env::args().collect();
         let mut f = File::open(args[1].as_str()).expect("File not found");
         f.read(&mut self.ram[0x200..]).unwrap();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_new() {
+        let chip8 = Chip8::new();
+        assert_eq!(chip8.ram.len(), 0xFFF);
+    }
+
+    #[test]
+    fn test_load_fontset() {
+        let mut chip8 = Chip8::new();
+        chip8.load_fontset();
+        assert_eq!(chip8.ram[0x00], 0xF0);
+        assert_eq!(chip8.ram[0x4F], 0x80);
+        assert_eq!(chip8.ram[0x50], 0x00);
     }
 }
