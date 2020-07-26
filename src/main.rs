@@ -95,6 +95,14 @@ fn main() {
     chip8.run();
 }
 
+#[derive(Debug)]
+#[derive(PartialEq)]
+enum Pc {
+    Inc,
+    Skip,
+    Jump(usize),
+}
+
 struct Chip8 {
     // 4KB of RAM
     ram: [u8; 0xFFF],
@@ -153,10 +161,40 @@ impl Chip8 {
 
     fn tick(&mut self) {
         let opcode = self.fetch();
+        self.run_opcode(opcode);
     }
 
     fn fetch(&self) -> u16 {
         (self.ram[self.pc] as u16) << 8 | self.ram[self.pc + 1] as u16
+    }
+
+    fn run_opcode(&mut self, opcode: u16) {
+        let nibbles = (
+            (opcode & 0xF000) >> 12 as usize,
+            (opcode & 0x0F00) >> 8 as usize,
+            (opcode & 0x00F0) >> 4 as usize,
+            (opcode & 0x000F) as usize,
+        );
+        let nnn = (opcode & 0xFFF) as usize;
+        let kk = (opcode & 0xFF) as u8;
+        let x = nibbles.1;
+        let y = nibbles.1;
+        let n = nibbles.1;
+
+        let pc = match nibbles {
+            (0x00, 0x00, 0x0E, 0x00) => self.op_00E0(),
+            _ => panic!("{:04X}: {:04x} is invalid opcode", self.pc, opcode)
+        };
+
+        match pc {
+            Pc::Inc => self.pc +=2,
+            Pc::Skip => self.pc += 4,
+            Pc::Jump(addr) => self.pc = addr,
+        }
+    }
+
+    fn op_00E0(&self) -> Pc{
+        Pc::Inc
     }
 }
 
@@ -184,9 +222,16 @@ mod tests {
     #[test]
     fn test_fetch() {
         let mut chip8 = Chip8::new();
+
         chip8.ram[0x200] = 0x01;
         chip8.ram[0x201] = 0x23;
         let opcode = chip8.fetch();
         assert_eq!(opcode, 0x0123);
+
+        chip8.ram[0x300] = 0xAB;
+        chip8.ram[0x301] = 0xCD;
+        chip8.pc = 0x300;
+        let opcode = chip8.fetch();
+        assert_eq!(opcode, 0xABCD);
     }
 }
