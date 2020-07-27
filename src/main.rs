@@ -440,7 +440,7 @@ mod tests {
 
     #[test]
     fn test_00e0() {
-        let mut chip8 = Chip8::new();
+        let chip8 = Chip8::new();
         let pc = chip8.op_00e0();
         assert_eq!(pc, Pc::Inc);
     }
@@ -478,5 +478,27 @@ mod tests {
         assert_eq!(pc, Pc::Jump(0x202));
         assert_eq!(chip8.pc, 0x202);
         assert_eq!(chip8.sp, 0);
+    }
+
+    #[test]
+    fn test_0nnn() {
+        let chip8 = Chip8::new();
+
+        let pc = chip8.op_0nnn(0x280);
+        assert_eq!(pc, Pc::Jump(0x280));
+
+        let pc = chip8.op_0nnn(0x300);
+        assert_eq!(pc, Pc::Jump(0x300));
+    }
+
+    #[test]
+    fn test_1nnn() {
+        let chip8 = Chip8::new();
+
+        let pc = chip8.op_1nnn(0x280);
+        assert_eq!(pc, Pc::Jump(0x280));
+
+        let pc = chip8.op_1nnn(0x300);
+        assert_eq!(pc, Pc::Jump(0x300));
     }
 }
