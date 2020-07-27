@@ -416,8 +416,9 @@ impl Chip8 {
     }
 
     // LD F, Vx: Set I = location of sprite for digit Vx
-    fn op_fx29(&self, x: usize) -> Pc {
-        self.op_not_impl()
+    fn op_fx29(&mut self, x: usize) -> Pc {
+        self.i = self.v[x] as usize * 5;
+        Pc::Inc
     }
 
     // LD B, Vx: Store BCD representation of Vx in memory locations I, I+1 and I+2

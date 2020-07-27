@@ -440,6 +440,7 @@ fn test_op_cxkk() {
 }
 
 #[test]
+#[ignore]
 fn test_op_dxyn() {
     let mut chip8 = Chip8::new();
     chip8.load_fontset();
@@ -472,6 +473,26 @@ fn test_op_fx1e() {
     let pc = chip8.op_fx1e(1);
     assert_eq!(pc, Pc::Inc);
     assert_eq!(chip8.i, 0x320);
+}
+
+#[test]
+fn test_op_fx29() {
+    let mut chip8 = Chip8::new();
+
+    chip8.v[0] = 0;
+    let pc = chip8.op_fx29(0);
+    assert_eq!(pc, Pc::Inc);
+    assert_eq!(chip8.i, 0);
+
+    chip8.v[1] = 1;
+    let pc = chip8.op_fx29(1);
+    assert_eq!(pc, Pc::Inc);
+    assert_eq!(chip8.i, 5);
+
+    chip8.v[2] = 4;
+    let pc = chip8.op_fx29(2);
+    assert_eq!(pc, Pc::Inc);
+    assert_eq!(chip8.i, 20);
 }
 
 #[test]
