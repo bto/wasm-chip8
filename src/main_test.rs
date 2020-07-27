@@ -413,7 +413,7 @@ fn test_cxkk() {
     let mut chip8 = Chip8::new();
 
     for i in 0..2 {
-        for j in 0..5 {
+        for _i in 0..5 {
             chip8.v[i] = 0xFF;
             let pc = chip8.op_cxkk(i, 0xF);
             assert_eq!(pc, Pc::Inc);
