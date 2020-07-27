@@ -116,14 +116,15 @@ impl Chip8 {
     fn tick(&mut self) {
         let opcode = self.fetch();
         trace!("[{:04X}] {:04X}", self.pc, opcode);
-        self.run_opcode(opcode);
+        let pc = self.run_opcode(opcode);
+        self.set_pc(&pc);
     }
 
     fn fetch(&self) -> u16 {
         (self.ram[self.pc] as u16) << 8 | self.ram[self.pc + 1] as u16
     }
 
-    fn run_opcode(&mut self, opcode: u16) {
+    fn run_opcode(&mut self, opcode: u16) -> Pc {
         let nibbles = (
             (opcode & 0xF000) >> 12 as usize,
             (opcode & 0x0F00) >> 8 as usize,
@@ -136,7 +137,7 @@ impl Chip8 {
         let y = nibbles.2 as usize;
         let n = nibbles.3 as usize;
 
-        let pc = match nibbles {
+        match nibbles {
             (0x00, 0x00, 0x0E, 0x00) => self.op_00e0(),
             (0x00, 0x00, 0x0E, 0x0E) => self.op_00ee(),
             (0x00, _, _, _) => self.op_0nnn(nnn),
@@ -173,9 +174,11 @@ impl Chip8 {
             (0x0F, _, 0x05, 0x05) => self.op_fx55(x),
             (0x0F, _, 0x06, 0x05) => self.op_fx65(x),
             _ => panic!("{:04X}: {:04x} is invalid opcode", self.pc, opcode)
-        };
+        }
+    }
 
-        match pc {
+    fn set_pc(&mut self, pc: &Pc) {
+        match *pc {
             Pc::Inc => self.pc +=2,
             Pc::Skip => self.pc += 4,
             Pc::Jump(addr) => self.pc = addr,
@@ -196,7 +199,7 @@ impl Chip8 {
     // RET: Return from a subroutine
     fn op_00ee(&mut self) -> Pc {
         self.sp -= 1;
-        Pc::Jump(self.stack[self.sp])
+        Pc::Jump(self.stack[self.sp] + 2)
     }
 
     // SYS addr: Jump to a machine code routine at nnn
@@ -211,7 +214,7 @@ impl Chip8 {
 
     // CALL addr: Call subroutine at nnn
     fn op_2nnn(&mut self, nnn: usize) -> Pc {
-        self.stack[self.sp] = self.pc + 2;
+        self.stack[self.sp] = self.pc;
         self.sp += 1;
         Pc::Jump(nnn)
     }
@@ -433,5 +436,47 @@ mod tests {
         chip8.pc = 0x300;
         let opcode = chip8.fetch();
         assert_eq!(opcode, 0xABCD);
+    }
+
+    #[test]
+    fn test_00e0() {
+        let mut chip8 = Chip8::new();
+        let pc = chip8.op_00e0();
+        assert_eq!(pc, Pc::Inc);
+    }
+
+    #[test]
+    fn test_00ee_2nnn() {
+        let mut chip8 = Chip8::new();
+        assert_eq!(chip8.pc, 0x200);
+        assert_eq!(chip8.sp, 0);
+
+        let pc = chip8.op_2nnn(0x280);
+        chip8.set_pc(&pc);
+        assert_eq!(pc, Pc::Jump(0x280));
+        assert_eq!(chip8.pc, 0x280);
+        assert_eq!(chip8.sp, 1);
+        assert_eq!(chip8.stack[0], 0x200);
+
+        let pc = chip8.op_2nnn(0x300);
+        chip8.set_pc(&pc);
+        assert_eq!(pc, Pc::Jump(0x300));
+        assert_eq!(chip8.pc, 0x300);
+        assert_eq!(chip8.sp, 2);
+        assert_eq!(chip8.stack[0], 0x200);
+        assert_eq!(chip8.stack[1], 0x280);
+
+        let pc = chip8.op_00ee();
+        chip8.set_pc(&pc);
+        assert_eq!(pc, Pc::Jump(0x282));
+        assert_eq!(chip8.pc, 0x282);
+        assert_eq!(chip8.sp, 1);
+        assert_eq!(chip8.stack[0], 0x200);
+
+        let pc = chip8.op_00ee();
+        chip8.set_pc(&pc);
+        assert_eq!(pc, Pc::Jump(0x202));
+        assert_eq!(chip8.pc, 0x202);
+        assert_eq!(chip8.sp, 0);
     }
 }
