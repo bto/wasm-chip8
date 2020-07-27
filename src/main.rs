@@ -138,6 +138,7 @@ impl Chip8 {
         let n = nibbles.3 as usize;
 
         match nibbles {
+            (0x00, 0x00, 0x00, 0x00) => self.op_0000(),
             (0x00, 0x00, 0x0E, 0x00) => self.op_00e0(),
             (0x00, 0x00, 0x0E, 0x0E) => self.op_00ee(),
             (0x00, _, _, _) => self.op_0nnn(nnn),
@@ -173,7 +174,7 @@ impl Chip8 {
             (0x0F, _, 0x03, 0x03) => self.op_fx33(x),
             (0x0F, _, 0x05, 0x05) => self.op_fx55(x),
             (0x0F, _, 0x06, 0x05) => self.op_fx65(x),
-            _ => panic!("{:04X}: {:04x} is invalid opcode", self.pc, opcode)
+            _ => panic!("{:04X}: {:04X} is invalid opcode", self.pc, opcode)
         }
     }
 
@@ -187,6 +188,11 @@ impl Chip8 {
 
     fn op_not_impl(&self) -> Pc {
         error!("Not implemented yet");
+        Pc::Inc
+    }
+
+    fn op_0000(&self) -> Pc {
+        std::process::exit(0);
         Pc::Inc
     }
 
