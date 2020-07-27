@@ -1,6 +1,8 @@
 use std::env;
 use std::fs::File;
 use std::io::{Read, Write, stdout};
+use std::thread;
+use std::time::Duration;
 
 #[macro_use] extern crate log;
 use log4rs;
@@ -87,6 +89,13 @@ impl Chip8 {
         }
     }
 
+    fn run(&mut self) {
+        loop {
+            thread::sleep(Duration::from_millis(100));
+            self.tick();
+        }
+    }
+
     fn load(&mut self) {
         self.load_fontset();
         self.load_rom();
@@ -130,12 +139,6 @@ impl Chip8 {
         let x = x as u16 + 1;
         let y = y as u16 + 1;
         write!(stdout, "{}", termion::cursor::Goto(x, y)).unwrap();
-    }
-
-    fn run(&mut self) {
-        loop {
-            self.tick();
-        }
     }
 
     fn tick(&mut self) {
