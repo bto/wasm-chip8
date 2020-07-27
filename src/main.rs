@@ -8,7 +8,6 @@ use std::time::Duration;
 use log4rs;
 use rand;
 use termion;
-use termion::raw::IntoRawMode;
 
 const FONT_SET: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -114,31 +113,27 @@ impl Chip8 {
     }
 
     fn display_clear(&self) {
-        let mut stdout = stdout().into_raw_mode().unwrap();
-        write!(stdout, "{}", termion::clear::All).unwrap();
+        write!(stdout(), "{}", termion::clear::All).unwrap();
     }
 
     fn display_draw(&self, x: usize, y: usize, color: u8) {
-        let mut stdout = stdout().into_raw_mode().unwrap();
         trace!("draw {}, {}, {}", x, y, color);
         self.display_goto(x, y);
         if color != 0 {
-            write!(stdout, "0").unwrap();
+            write!(stdout(), "0").unwrap();
         } else {
-            write!(stdout, " ").unwrap();
+            write!(stdout(), " ").unwrap();
         }
     }
 
     fn display_flush(&self) {
-        let mut stdout = stdout().into_raw_mode().unwrap();
-        stdout.flush().unwrap();
+        stdout().flush().unwrap();
     }
 
     fn display_goto(&self, x: usize, y: usize) {
-        let mut stdout = stdout().into_raw_mode().unwrap();
         let x = x as u16 + 1;
         let y = y as u16 + 1;
-        write!(stdout, "{}", termion::cursor::Goto(x, y)).unwrap();
+        write!(stdout(), "{}", termion::cursor::Goto(x, y)).unwrap();
     }
 
     fn tick(&mut self) {
