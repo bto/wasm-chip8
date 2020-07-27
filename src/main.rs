@@ -108,6 +108,7 @@ impl Chip8 {
     }
 
     fn display_draw(&self, x: usize, y: usize, color: u8) {
+        trace!("draw {}, {}, {}", x, y, color);
         self.display_goto(x, y);
         if color != 0 {
             write!(stdout(), "0").unwrap();

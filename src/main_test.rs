@@ -440,6 +440,24 @@ fn test_op_cxkk() {
 }
 
 #[test]
+fn test_op_dxyn() {
+    let mut chip8 = Chip8::new();
+    chip8.load_fontset();
+    chip8.display_clear();
+
+    for i in 0..4 {
+        for j in 0..4 {
+            chip8.v[j] = j as u8 * 5;
+            chip8.v[j + 1] = i * 6;
+            chip8.i = i as usize * 20 + j * 5;
+            chip8.op_dxyn(j, j + 1, 5);
+        }
+    }
+
+    chip8.display_flush();
+}
+
+#[test]
 fn test_op_fx1e() {
     let mut chip8 = Chip8::new();
 
