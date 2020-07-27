@@ -193,7 +193,6 @@ impl Chip8 {
 
     fn op_0000(&self) -> Pc {
         std::process::exit(0);
-        Pc::Inc
     }
 
     // CLS: Clear the display
