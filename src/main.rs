@@ -70,6 +70,7 @@ struct Chip8 {
     // Program counter
     pc: usize,
 
+    vram: [[u8; 64]; 32],
 }
 
 impl Chip8 {
@@ -81,6 +82,7 @@ impl Chip8 {
             stack: [0; 16],
             sp: 0,
             pc: 0x200,
+            vram: [[0u8; 64]; 32],
         }
     }
 
@@ -196,8 +198,13 @@ impl Chip8 {
     }
 
     // CLS: Clear the display
-    fn op_00e0(&self) -> Pc {
+    fn op_00e0(&mut self) -> Pc {
         self.clear();
+        for y in 0..32 {
+            for x in 0..64 {
+                self.vram[y][x] = 0;
+            }
+        }
         Pc::Inc
     }
 
