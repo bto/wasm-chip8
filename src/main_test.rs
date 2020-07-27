@@ -20,7 +20,7 @@ fn test_load_fontset() {
 
 #[test]
 #[ignore]
-fn test_draw() {
+fn test_display() {
     let chip8 = Chip8::new();
 
     chip8.display_clear();
