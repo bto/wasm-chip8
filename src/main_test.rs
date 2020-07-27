@@ -19,6 +19,22 @@ fn test_load_fontset() {
 }
 
 #[test]
+#[ignore]
+fn test_draw() {
+    let chip8 = Chip8::new();
+
+    chip8.dsp_clear();
+    for x in 0..3 {
+        for y in 0..3 {
+            chip8.dsp_draw(x, y, 1);
+        }
+    }
+    chip8.dsp_draw(1, 1, 0);
+    chip8.dsp_goto(0, 4);
+    chip8.dsp_flush();
+}
+
+#[test]
 fn test_fetch() {
     let mut chip8 = Chip8::new();
 

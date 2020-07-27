@@ -103,10 +103,27 @@ impl Chip8 {
         f.read(&mut self.ram[0x200..]).unwrap();
     }
 
-    fn clear(&self) {
-        let mut stdout = stdout();
-        write!(stdout, "{}{}", termion::clear::All, termion::cursor::Goto(1, 1)).unwrap();
-        stdout.flush().unwrap();
+    fn dsp_clear(&self) {
+        write!(stdout(), "{}", termion::clear::All).unwrap();
+    }
+
+    fn dsp_draw(&self, x: usize, y: usize, color: u8) {
+        self.dsp_goto(x, y);
+        if color != 0 {
+            write!(stdout(), "0").unwrap();
+        } else {
+            write!(stdout(), " ").unwrap();
+        }
+    }
+
+    fn dsp_flush(&self) {
+        stdout().flush().unwrap();
+    }
+
+    fn dsp_goto(&self, x: usize, y: usize) {
+        let x = x as u16 + 1;
+        let y = y as u16 + 1;
+        write!(stdout(), "{}", termion::cursor::Goto(x, y)).unwrap();
     }
 
     fn run(&mut self) {
@@ -199,7 +216,8 @@ impl Chip8 {
 
     // CLS: Clear the display
     fn op_00e0(&mut self) -> Pc {
-        self.clear();
+        self.dsp_clear();
+        self.dsp_flush();
         for y in 0..32 {
             for x in 0..64 {
                 self.vram[y][x] = 0;
@@ -343,8 +361,21 @@ impl Chip8 {
     }
 
     // DRW Vx, Vy, nibble: Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision
-    fn op_dxyn(&self, x: usize, y: usize, n: usize) -> Pc {
-        self.op_not_impl()
+    fn op_dxyn(&mut self, x: usize, y: usize, n: usize) -> Pc {
+        self.v[0xF] = 0;
+        for byte in 0..n {
+            let sprite = self.ram[self.i + byte];
+            let y = self.v[y] as usize + byte;
+            for bit in 0..8 {
+                let x = self.v[x] as usize + bit;
+                let color = (sprite >> (7 - bit)) & 0x1;
+                self.v[0xF] |= color & self.vram[y][x];
+                self.vram[y][x] ^= color;
+                self.dsp_draw(x, y, color);
+            }
+        }
+        self.dsp_flush();
+        Pc::Inc
     }
 
     // SKP Vx: Skip next instruction if key with the value of Vx is pressed
