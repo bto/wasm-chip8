@@ -103,12 +103,12 @@ impl Chip8 {
         f.read(&mut self.ram[0x200..]).unwrap();
     }
 
-    fn dsp_clear(&self) {
+    fn display_clear(&self) {
         write!(stdout(), "{}", termion::clear::All).unwrap();
     }
 
-    fn dsp_draw(&self, x: usize, y: usize, color: u8) {
-        self.dsp_goto(x, y);
+    fn display_draw(&self, x: usize, y: usize, color: u8) {
+        self.display_goto(x, y);
         if color != 0 {
             write!(stdout(), "0").unwrap();
         } else {
@@ -116,11 +116,11 @@ impl Chip8 {
         }
     }
 
-    fn dsp_flush(&self) {
+    fn display_flush(&self) {
         stdout().flush().unwrap();
     }
 
-    fn dsp_goto(&self, x: usize, y: usize) {
+    fn display_goto(&self, x: usize, y: usize) {
         let x = x as u16 + 1;
         let y = y as u16 + 1;
         write!(stdout(), "{}", termion::cursor::Goto(x, y)).unwrap();
@@ -216,8 +216,8 @@ impl Chip8 {
 
     // CLS: Clear the display
     fn op_00e0(&mut self) -> Pc {
-        self.dsp_clear();
-        self.dsp_flush();
+        self.display_clear();
+        self.display_flush();
         for y in 0..32 {
             for x in 0..64 {
                 self.vram[y][x] = 0;
@@ -371,10 +371,10 @@ impl Chip8 {
                 let color = (sprite >> (7 - bit)) & 0x1;
                 self.v[0xF] |= color & self.vram[y][x];
                 self.vram[y][x] ^= color;
-                self.dsp_draw(x, y, color);
+                self.display_draw(x, y, color);
             }
         }
-        self.dsp_flush();
+        self.display_flush();
         Pc::Inc
     }
 

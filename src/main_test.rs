@@ -23,15 +23,15 @@ fn test_load_fontset() {
 fn test_draw() {
     let chip8 = Chip8::new();
 
-    chip8.dsp_clear();
+    chip8.display_clear();
     for x in 0..3 {
         for y in 0..3 {
-            chip8.dsp_draw(x, y, 1);
+            chip8.display_draw(x, y, 1);
         }
     }
-    chip8.dsp_draw(1, 1, 0);
-    chip8.dsp_goto(0, 4);
-    chip8.dsp_flush();
+    chip8.display_draw(1, 1, 0);
+    chip8.display_goto(0, 4);
+    chip8.display_flush();
 }
 
 #[test]
@@ -52,14 +52,14 @@ fn test_fetch() {
 
 #[test]
 #[ignore]
-fn test_00e0() {
+fn test_op_00e0() {
     let mut chip8 = Chip8::new();
     let pc = chip8.op_00e0();
     assert_eq!(pc, Pc::Inc);
 }
 
 #[test]
-fn test_00ee_2nnn() {
+fn test_op_00ee_2nnn() {
     let mut chip8 = Chip8::new();
     assert_eq!(chip8.pc, 0x200);
     assert_eq!(chip8.sp, 0);
@@ -94,7 +94,7 @@ fn test_00ee_2nnn() {
 }
 
 #[test]
-fn test_0nnn() {
+fn test_op_0nnn() {
     let chip8 = Chip8::new();
 
     let pc = chip8.op_0nnn(0x280);
@@ -105,7 +105,7 @@ fn test_0nnn() {
 }
 
 #[test]
-fn test_1nnn() {
+fn test_op_1nnn() {
     let chip8 = Chip8::new();
 
     let pc = chip8.op_1nnn(0x280);
@@ -116,7 +116,7 @@ fn test_1nnn() {
 }
 
 #[test]
-fn test_3xkk() {
+fn test_op_3xkk() {
     let mut chip8 = Chip8::new();
 
     chip8.v[0] = 0x1;
@@ -129,7 +129,7 @@ fn test_3xkk() {
 }
 
 #[test]
-fn test_4xkk() {
+fn test_op_4xkk() {
     let mut chip8 = Chip8::new();
 
     chip8.v[0] = 0x1;
@@ -142,7 +142,7 @@ fn test_4xkk() {
 }
 
 #[test]
-fn test_5xy0() {
+fn test_op_5xy0() {
     let mut chip8 = Chip8::new();
 
     chip8.v[0] = 0x1;
@@ -157,7 +157,7 @@ fn test_5xy0() {
 }
 
 #[test]
-fn test_6xkk() {
+fn test_op_6xkk() {
     let mut chip8 = Chip8::new();
 
     assert_eq!(chip8.v[0], 0x0);
@@ -172,7 +172,7 @@ fn test_6xkk() {
 }
 
 #[test]
-fn test_7xkk() {
+fn test_op_7xkk() {
     let mut chip8 = Chip8::new();
 
     // not overflow
@@ -193,7 +193,7 @@ fn test_7xkk() {
 }
 
 #[test]
-fn test_8xy0() {
+fn test_op_8xy0() {
     let mut chip8 = Chip8::new();
 
     chip8.v[1] = 0x1;
@@ -210,7 +210,7 @@ fn test_8xy0() {
 }
 
 #[test]
-fn test_8xy1() {
+fn test_op_8xy1() {
     let mut chip8 = Chip8::new();
 
     chip8.v[0] = 0b0011;
@@ -229,7 +229,7 @@ fn test_8xy1() {
 }
 
 #[test]
-fn test_8xy2() {
+fn test_op_8xy2() {
     let mut chip8 = Chip8::new();
 
     chip8.v[0] = 0b0011;
@@ -248,7 +248,7 @@ fn test_8xy2() {
 }
 
 #[test]
-fn test_8xy3() {
+fn test_op_8xy3() {
     let mut chip8 = Chip8::new();
 
     chip8.v[0] = 0b0011;
@@ -267,7 +267,7 @@ fn test_8xy3() {
 }
 
 #[test]
-fn test_8xy4() {
+fn test_op_8xy4() {
     let mut chip8 = Chip8::new();
 
     // not overflow
@@ -292,7 +292,7 @@ fn test_8xy4() {
 }
 
 #[test]
-fn test_8xy5() {
+fn test_op_8xy5() {
     let mut chip8 = Chip8::new();
 
     // not borrow
@@ -317,7 +317,7 @@ fn test_8xy5() {
 }
 
 #[test]
-fn test_8x06() {
+fn test_op_8x06() {
     let mut chip8 = Chip8::new();
 
     // not overflow
@@ -338,7 +338,7 @@ fn test_8x06() {
 }
 
 #[test]
-fn test_8xy7() {
+fn test_op_8xy7() {
     let mut chip8 = Chip8::new();
 
     // not borrow
@@ -363,7 +363,7 @@ fn test_8xy7() {
 }
 
 #[test]
-fn test_8x0e() {
+fn test_op_8x0e() {
     let mut chip8 = Chip8::new();
 
     // not overflow
@@ -384,7 +384,7 @@ fn test_8x0e() {
 }
 
 #[test]
-fn test_9xy0() {
+fn test_op_9xy0() {
     let mut chip8 = Chip8::new();
 
     chip8.v[0] = 0x1;
@@ -399,7 +399,7 @@ fn test_9xy0() {
 }
 
 #[test]
-fn test_annn() {
+fn test_op_annn() {
     let mut chip8 = Chip8::new();
 
     let pc = chip8.op_annn(0x280);
@@ -412,7 +412,7 @@ fn test_annn() {
 }
 
 #[test]
-fn test_bnnn() {
+fn test_op_bnnn() {
     let mut chip8 = Chip8::new();
 
     chip8.v[0] = 0x0;
@@ -425,7 +425,7 @@ fn test_bnnn() {
 }
 
 #[test]
-fn test_cxkk() {
+fn test_op_cxkk() {
     let mut chip8 = Chip8::new();
 
     for i in 0..2 {
@@ -440,7 +440,7 @@ fn test_cxkk() {
 }
 
 #[test]
-fn test_fx1e() {
+fn test_op_fx1e() {
     let mut chip8 = Chip8::new();
 
     chip8.v[0] = 0x10;
@@ -457,7 +457,7 @@ fn test_fx1e() {
 }
 
 #[test]
-fn test_fx33() {
+fn test_op_fx33() {
     let mut chip8 = Chip8::new();
 
     chip8.v[0] = 254;
@@ -478,7 +478,7 @@ fn test_fx33() {
 }
 
 #[test]
-fn test_fx55() {
+fn test_op_fx55() {
     let mut chip8 = Chip8::new();
 
     chip8.v[0] = 0x1;
@@ -505,7 +505,7 @@ fn test_fx55() {
 }
 
 #[test]
-fn test_fx65() {
+fn test_op_fx65() {
     let mut chip8 = Chip8::new();
 
     chip8.ram[0x400] = 0x1;
