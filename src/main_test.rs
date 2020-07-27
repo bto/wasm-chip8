@@ -35,6 +35,7 @@ fn test_fetch() {
 }
 
 #[test]
+#[ignore]
 fn test_00e0() {
     let chip8 = Chip8::new();
     let pc = chip8.op_00e0();
