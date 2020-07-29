@@ -168,7 +168,27 @@ impl Chip8 {
 
     fn tick(&mut self) {
         let opcode = self.fetch();
+
         trace!("[{:04X}] {:04X}", self.pc, opcode);
+        trace!(
+            "v0_7 = [{:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}]",
+            self.v[0x0], self.v[0x1], self.v[0x2], self.v[0x3], self.v[0x4], self.v[0x5], self.v[0x6], self.v[0x7]
+        );
+        trace!(
+            "v8_F = [{:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}]",
+            self.v[0x8], self.v[0x9], self.v[0xA], self.v[0xB], self.v[0xC], self.v[0xD], self.v[0xE], self.v[0xF]
+        );
+        trace!("i = {:04X}", self.i);
+        trace!(
+            "stack0_7 = [{:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}]",
+            self.stack[0x0], self.stack[0x1], self.stack[0x2], self.stack[0x3], self.stack[0x4], self.stack[0x5], self.stack[0x6], self.stack[0x7],
+        );
+        trace!(
+            "stack8_F = [{:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}]",
+            self.stack[0x8], self.stack[0x9], self.stack[0xA], self.stack[0xB], self.stack[0xC], self.stack[0xD], self.stack[0xE], self.stack[0xF],
+        );
+        trace!("sp = {:04X}", self.sp);
+
         let pc = self.run_opcode(opcode);
         self.set_pc(&pc);
     }
