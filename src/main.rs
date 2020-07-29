@@ -7,7 +7,8 @@ use std::time::Duration;
 #[macro_use] extern crate log;
 use log4rs;
 use rand;
-use termion;
+use termion::raw::IntoRawMode;
+use termion::async_stdin;
 
 const FONT_SET: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -73,6 +74,7 @@ struct Chip8 {
     pc: usize,
 
     vram: [[u8; 64]; 32],
+    keycode: u8,
 }
 
 impl Chip8 {
@@ -85,13 +87,41 @@ impl Chip8 {
             sp: 0,
             pc: 0x200,
             vram: [[0u8; 64]; 32],
+            keycode: 0xFF,
         }
     }
 
     fn run(&mut self) {
+        let _stdout = stdout().into_raw_mode().unwrap();
+        let mut stdin = async_stdin().bytes();
+
         loop {
-            thread::sleep(Duration::from_millis(100));
+            if let Some(c) = stdin.next() {
+                match c.unwrap() {
+                    0x1B => break, // Esc key
+                    b'1' => self.keycode = 0x1,
+                    b'2' => self.keycode = 0x2,
+                    b'3' => self.keycode = 0x3,
+                    b'4' => self.keycode = 0xC,
+                    b'q' => self.keycode = 0x4,
+                    b'w' => self.keycode = 0x5,
+                    b'e' => self.keycode = 0x6,
+                    b'r' => self.keycode = 0xD,
+                    b'a' => self.keycode = 0x7,
+                    b's' => self.keycode = 0x8,
+                    b'd' => self.keycode = 0x9,
+                    b'f' => self.keycode = 0xE,
+                    b'z' => self.keycode = 0xA,
+                    b'x' => self.keycode = 0x0,
+                    b'c' => self.keycode = 0xB,
+                    b'v' => self.keycode = 0xF,
+                    _ => (),
+                };
+            };
+
             self.tick();
+
+            thread::sleep(Duration::from_millis(10));
         }
     }
 
@@ -384,12 +414,12 @@ impl Chip8 {
 
     // SKP Vx: Skip next instruction if key with the value of Vx is pressed
     fn op_ex9e(&self, x: usize) -> Pc {
-        self.op_not_impl()
+        Pc::skip_if(self.v[x] == self.keycode)
     }
 
     // SKNP Vx: Skip next instruction if key with the value of Vx is not pressed
     fn op_exa1(&self, x: usize) -> Pc {
-        self.op_not_impl()
+        Pc::skip_if(self.v[x] != self.keycode)
     }
 
     // LD Vx, DT: Set Vx = delay timer value
