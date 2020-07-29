@@ -172,8 +172,10 @@ impl Chip8 {
 
     fn tick(&mut self) {
         let opcode = self.fetch();
-
         trace!("[{:04X}] {:04X}", self.pc, opcode);
+
+        let pc = self.run_opcode(opcode);
+        self.set_pc(&pc);
         trace!(
             "v0_7 = [{:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}]",
             self.v[0x0], self.v[0x1], self.v[0x2], self.v[0x3], self.v[0x4], self.v[0x5], self.v[0x6], self.v[0x7]
@@ -192,9 +194,6 @@ impl Chip8 {
             self.stack[0x8], self.stack[0x9], self.stack[0xA], self.stack[0xB], self.stack[0xC], self.stack[0xD], self.stack[0xE], self.stack[0xF],
         );
         trace!("sp = {:04X}", self.sp);
-
-        let pc = self.run_opcode(opcode);
-        self.set_pc(&pc);
     }
 
     fn fetch(&self) -> u16 {
@@ -274,6 +273,7 @@ impl Chip8 {
 
     // CLS: Clear the display
     fn op_00e0(&mut self) -> Pc {
+        trace!("CLS");
         self.display_clear();
         self.display_flush();
         for y in 0..32 {
@@ -286,22 +286,26 @@ impl Chip8 {
 
     // RET: Return from a subroutine
     fn op_00ee(&mut self) -> Pc {
+        trace!("RET");
         self.sp -= 1;
         Pc::Jump(self.stack[self.sp] + 2)
     }
 
     // SYS addr: Jump to a machine code routine at nnn
     fn op_0nnn(&self, nnn: usize) -> Pc {
+        trace!("SYS addr {:04X}", nnn);
         Pc::Jump(nnn)
     }
 
     // JP addr: Jump to location nnn
     fn op_1nnn(&self, nnn: usize) -> Pc {
+        trace!("JP addr {:04X}", nnn);
         Pc::Jump(nnn)
     }
 
     // CALL addr: Call subroutine at nnn
     fn op_2nnn(&mut self, nnn: usize) -> Pc {
+        trace!("CALL addr {:04X}", nnn);
         self.stack[self.sp] = self.pc;
         self.sp += 1;
         Pc::Jump(nnn)
@@ -309,57 +313,67 @@ impl Chip8 {
 
     // SE Vx, byte: Skip next instruction if Vx = kk
     fn op_3xkk(&self, x: usize, kk: u8) -> Pc {
+        trace!("SE V{:X} {:02X}", x, kk);
         Pc::skip_if(self.v[x] == kk)
     }
 
     // SNE Vx, byte: Skip next instruction if Vx != kk
     fn op_4xkk(&self, x: usize, kk: u8) -> Pc {
+        trace!("SNE V{:X} {:02X}", x, kk);
         Pc::skip_if(self.v[x] != kk)
     }
 
     // SE Vx, Vy: Skip next instruction if Vx = Vy
     fn op_5xy0(&self, x: usize, y: usize) -> Pc {
+        trace!("SE V{:X} V{:X}", x, y);
         Pc::skip_if(self.v[x] == self.v[y])
     }
 
     // LD Vx, byte: Set Vx = kk
     fn op_6xkk(&mut self, x: usize, kk: u8) -> Pc {
+        trace!("LD V{:X} {:02X}", x, kk);
         self.v[x] = kk;
         Pc::Inc
     }
 
     // ADD Vx, byte: Set Vx = Vx + kk
     fn op_7xkk(&mut self, x: usize, kk: u8) -> Pc {
+        trace!("ADD V{:X} {:02X}", x, kk);
         self.v[x] = (self.v[x] as u16 + kk as u16) as u8;
         Pc::Inc
     }
 
     // LD Vx, Vy: Set Vx = Vy
     fn op_8xy0(&mut self, x: usize, y: usize) -> Pc {
+        trace!("LD V{:X} V{:X}", x, y);
         self.v[x] = self.v[y];
         Pc::Inc
     }
 
     // OR Vx, Vy: Set Vx = Vx OR Vy
     fn op_8xy1(&mut self, x: usize, y: usize) -> Pc {
+        trace!("OR V{:X} V{:X}", x, y);
         self.v[x] |= self.v[y];
         Pc::Inc
     }
 
     // AND Vx, Vy: Set Vx = Vx AND Vy
     fn op_8xy2(&mut self, x: usize, y: usize) -> Pc {
+        trace!("AND V{:X} V{:X}", x, y);
         self.v[x] &= self.v[y];
         Pc::Inc
     }
 
     // XOR Vx, Vy: Set Vx = Vx XOR Vy
     fn op_8xy3(&mut self, x: usize, y: usize) -> Pc {
+        trace!("XOR V{:X} V{:X}", x, y);
         self.v[x] ^= self.v[y];
         Pc::Inc
     }
 
     // ADD Vx, Vy: Set Vx = Vx + Vy, set VF = carry
     fn op_8xy4(&mut self, x: usize, y: usize) -> Pc {
+        trace!("ADD V{:X} V{:X}", x, y);
         let vx = self.v[x] as u16 + self.v[y] as u16;
         self.v[x] = vx as u8;
         self.v[0xF] = (vx >> 8) as u8;
@@ -368,6 +382,7 @@ impl Chip8 {
 
     // SUB Vx, Vy: Set Vx = Vx - Vy, set VF = NOT borrow
     fn op_8xy5(&mut self, x: usize, y: usize) -> Pc {
+        trace!("SUB V{:X} V{:X}", x, y);
         let vx = self.v[x] as i16 - self.v[y] as i16;
         self.v[x] = vx as u8;
         self.v[0xF] = (!vx & 0x100 >> 8) as u8;
@@ -376,6 +391,7 @@ impl Chip8 {
 
     // SHR Vx{, Vy}: Set Vx = Vx SHR 1
     fn op_8x06(&mut self, x: usize) -> Pc {
+        trace!("SHR V{:X}", x);
         self.v[0xF] = self.v[x] & 0x1;
         self.v[x] >>= 1;
         Pc::Inc
@@ -383,6 +399,7 @@ impl Chip8 {
 
     // SUBN Vx, Vy: Set Vx = Vy - Vx, set VF = NOT borrow
     fn op_8xy7(&mut self, x: usize, y: usize) -> Pc {
+        trace!("SUBN V{:X} V{:X}", x, y);
         let vx = self.v[y] as i16 - self.v[x] as i16;
         self.v[x] = vx as u8;
         self.v[0xF] = (!vx & 0x100 >> 8) as u8;
@@ -391,6 +408,7 @@ impl Chip8 {
 
     // SHL Vx{, Vy}: Set Vx = Vx SHL 1
     fn op_8x0e(&mut self, x: usize) -> Pc {
+        trace!("SHL V{:X}", x);
         self.v[0xF] = self.v[x] >> 7;
         self.v[x] <<= 1;
         Pc::Inc
@@ -398,28 +416,33 @@ impl Chip8 {
 
     // SNE Vx, Vy: Skip next instruction if Vx != Vy
     fn op_9xy0(&self, x: usize, y: usize) -> Pc {
+        trace!("SNE V{:X} V{:X}", x, y);
         Pc::skip_if(self.v[x] != self.v[y])
     }
 
     // LD I, addr: Set I = nnn
     fn op_annn(&mut self, nnn: usize) -> Pc {
+        trace!("LD I, addr {:04X}", nnn);
         self.i = nnn;
         Pc::Inc
     }
 
     // JP V0, addr: Jump to location nnn + V0
     fn op_bnnn(&self, nnn: usize) -> Pc {
+        trace!("JP V0 {:04X}", nnn);
         Pc::Jump(nnn + self.v[0] as usize)
     }
 
     // RND Vx, byte: Set Vx = random byte AND kk
     fn op_cxkk(&mut self, x: usize, kk: u8) -> Pc {
+        trace!("RND V{:X} {:02X}", x, kk);
         self.v[x] = rand::random::<u8>() & kk;
         Pc::Inc
     }
 
     // DRW Vx, Vy, nibble: Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision
     fn op_dxyn(&mut self, x: usize, y: usize, n: usize) -> Pc {
+        trace!("DRW V{:X} V{:X}, {}", x, y, n);
         self.v[0xF] = 0;
         for byte in 0..n {
             let sprite = self.ram[self.i + byte];
@@ -444,48 +467,57 @@ impl Chip8 {
 
     // SKP Vx: Skip next instruction if key with the value of Vx is pressed
     fn op_ex9e(&self, x: usize) -> Pc {
+        trace!("SKP V{:X}", x);
         Pc::skip_if(self.v[x] == self.keycode)
     }
 
     // SKNP Vx: Skip next instruction if key with the value of Vx is not pressed
     fn op_exa1(&self, x: usize) -> Pc {
+        trace!("SKNP V{:X}", x);
         Pc::skip_if(self.v[x] != self.keycode)
     }
 
     // LD Vx, DT: Set Vx = delay timer value
     fn op_fx07(&self, x: usize) -> Pc {
+        trace!("LD V{:X}, DT", x);
         self.op_not_impl()
     }
 
     // LD Vx, K: Wait for a key press, store the value of the key in Vx
     fn op_fx0a(&self, x: usize) -> Pc {
+        trace!("LD V{:X}, K", x);
         self.op_not_impl()
     }
 
     // LD DT, Vx: Set delay timer = Vx
     fn op_fx15(&self, x: usize) -> Pc {
+        trace!("LD DT, V{:X}", x);
         self.op_not_impl()
     }
 
     // LD ST, Vx: Set sound timer = Vx
     fn op_fx18(&self, x: usize) -> Pc {
+        trace!("LD ST, V{:X}", x);
         self.op_not_impl()
     }
 
     // ADD I, Vx: Set I = I + Vx
     fn op_fx1e(&mut self, x: usize) -> Pc {
+        trace!("ADD I, V{:X}", x);
         self.i += self.v[x] as usize;
         Pc::Inc
     }
 
     // LD F, Vx: Set I = location of sprite for digit Vx
     fn op_fx29(&mut self, x: usize) -> Pc {
+        trace!("LD F, V{:X}", x);
         self.i = self.v[x] as usize * 5;
         Pc::Inc
     }
 
     // LD B, Vx: Store BCD representation of Vx in memory locations I, I+1 and I+2
     fn op_fx33(&mut self, x: usize) -> Pc {
+        trace!("LD B, V{:X}", x);
         self.ram[self.i] = self.v[x] / 100;
         self.ram[self.i + 1] = (self.v[x] / 10) % 10;
         self.ram[self.i + 2] = self.v[x] % 10;
@@ -494,6 +526,7 @@ impl Chip8 {
 
     // LD [I], Vx: Store registers V0 through Vx in memory starting at location I
     fn op_fx55(&mut self, x: usize) -> Pc {
+        trace!("LD [I] V{:X}", x);
         for i in 0..x + 1 {
             self.ram[self.i + i] = self.v[i];
         }
@@ -502,6 +535,7 @@ impl Chip8 {
 
     // LD Vx, [I]: Load registers V0 through Vx in memory starting at location I
     fn op_fx65(&mut self, x: usize) -> Pc {
+        trace!("LD V{:X} [I]", x);
         for i in 0..x + 1 {
             self.v[i] = self.ram[self.i + i];
         }
