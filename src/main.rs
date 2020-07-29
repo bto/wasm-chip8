@@ -91,43 +91,6 @@ impl Chip8 {
         }
     }
 
-    fn run(&mut self) {
-        self.display_clear();
-        self.display_flush();
-
-        let _stdout = stdout().into_raw_mode().unwrap();
-        let mut stdin = async_stdin().bytes();
-
-        loop {
-            if let Some(c) = stdin.next() {
-                match c.unwrap() {
-                    0x1B => break, // Esc key
-                    b'1' => self.keycode = 0x1,
-                    b'2' => self.keycode = 0x2,
-                    b'3' => self.keycode = 0x3,
-                    b'4' => self.keycode = 0xC,
-                    b'q' => self.keycode = 0x4,
-                    b'w' => self.keycode = 0x5,
-                    b'e' => self.keycode = 0x6,
-                    b'r' => self.keycode = 0xD,
-                    b'a' => self.keycode = 0x7,
-                    b's' => self.keycode = 0x8,
-                    b'd' => self.keycode = 0x9,
-                    b'f' => self.keycode = 0xE,
-                    b'z' => self.keycode = 0xA,
-                    b'x' => self.keycode = 0x0,
-                    b'c' => self.keycode = 0xB,
-                    b'v' => self.keycode = 0xF,
-                    _ => (),
-                };
-            };
-
-            self.tick();
-
-            thread::sleep(Duration::from_millis(10));
-        }
-    }
-
     fn load(&mut self) {
         self.load_fontset();
         self.load_rom();
@@ -143,6 +106,55 @@ impl Chip8 {
         let args: Vec<String> = env::args().collect();
         let mut f = File::open(args[1].as_str()).expect("File not found");
         f.read(&mut self.ram[0x200..]).unwrap();
+    }
+
+    fn run(&mut self) {
+        self.display_clear();
+        self.display_flush();
+
+        let _stdout = stdout().into_raw_mode().unwrap();
+        let mut stdin = async_stdin().bytes();
+
+        loop {
+            let keycode = self.get_key(&mut stdin);
+            match keycode {
+                0xFE => break, // Esc key
+                0xFF => (),
+                _ => self.keycode = keycode,
+            }
+
+            self.tick();
+
+            thread::sleep(Duration::from_millis(10));
+        }
+    }
+
+    fn get_key(&mut self, stdin: &mut std::io::Bytes<termion::AsyncReader>) -> u8 {
+        match stdin.next() {
+            Some(c) => {
+                match c.unwrap() {
+                    b'x' => 0x0,
+                    b'1' => 0x1,
+                    b'2' => 0x2,
+                    b'3' => 0x3,
+                    b'q' => 0x4,
+                    b'w' => 0x5,
+                    b'e' => 0x6,
+                    b'a' => 0x7,
+                    b's' => 0x8,
+                    b'd' => 0x9,
+                    b'z' => 0xA,
+                    b'c' => 0xB,
+                    b'4' => 0xC,
+                    b'r' => 0xD,
+                    b'f' => 0xE,
+                    b'v' => 0xF,
+                    0x1B => 0xFE, // Esc key
+                    _ => 0xFF,
+                }
+            },
+            None => 0xFF,
+        }
     }
 
     fn display_clear(&mut self) {
@@ -465,15 +477,25 @@ impl Chip8 {
     }
 
     // SKP Vx: Skip next instruction if key with the value of Vx is pressed
-    fn op_ex9e(&self, x: usize) -> Pc {
+    fn op_ex9e(&mut self, x: usize) -> Pc {
         trace!("SKP V{:X}", x);
-        Pc::skip_if(self.v[x] == self.keycode)
+        if self.v[x] == self.keycode {
+            self.keycode = 0xFF;
+            Pc::Skip
+        } else {
+            Pc::Inc
+        }
     }
 
     // SKNP Vx: Skip next instruction if key with the value of Vx is not pressed
-    fn op_exa1(&self, x: usize) -> Pc {
+    fn op_exa1(&mut self, x: usize) -> Pc {
         trace!("SKNP V{:X}", x);
-        Pc::skip_if(self.v[x] != self.keycode)
+        if self.v[x] == self.keycode {
+            self.keycode = 0xFF;
+            Pc::Inc
+        } else {
+            Pc::Skip
+        }
     }
 
     // LD Vx, DT: Set Vx = delay timer value
