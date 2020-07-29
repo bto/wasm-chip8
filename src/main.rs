@@ -75,7 +75,6 @@ struct Chip8 {
 
     vram: [[u8; 64]; 32],
     keycode: u8,
-    stdout: termion::raw::RawTerminal<std::io::Stdout>,
 }
 
 impl Chip8 {
@@ -89,7 +88,6 @@ impl Chip8 {
             pc: 0x200,
             vram: [[0u8; 64]; 32],
             keycode: 0xFF,
-            stdout: stdout().into_raw_mode().unwrap(),
         }
     }
 
@@ -97,6 +95,7 @@ impl Chip8 {
         self.display_clear();
         self.display_flush();
 
+        let _stdout = stdout().into_raw_mode().unwrap();
         let mut stdin = async_stdin().bytes();
 
         loop {
@@ -147,27 +146,27 @@ impl Chip8 {
     }
 
     fn display_clear(&mut self) {
-        write!(self.stdout, "{}", termion::clear::All).unwrap();
+        write!(stdout(), "{}", termion::clear::All).unwrap();
     }
 
     fn display_draw(&mut self, x: usize, y: usize, color: u8) {
         trace!("draw {}, {}, {}", x, y, color);
         self.display_goto(x, y);
         if color != 0 {
-            write!(self.stdout, "0").unwrap();
+            write!(stdout(), "0").unwrap();
         } else {
-            write!(self.stdout, " ").unwrap();
+            write!(stdout(), " ").unwrap();
         }
     }
 
     fn display_flush(&mut self) {
-        self.stdout.flush().unwrap();
+        stdout().flush().unwrap();
     }
 
     fn display_goto(&mut self, x: usize, y: usize) {
         let x = x as u16 + 1;
         let y = y as u16 + 1;
-        write!(self.stdout, "{}", termion::cursor::Goto(x, y)).unwrap();
+        write!(stdout(), "{}", termion::cursor::Goto(x, y)).unwrap();
     }
 
     fn tick(&mut self) {
