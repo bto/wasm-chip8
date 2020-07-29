@@ -21,7 +21,7 @@ fn test_load_fontset() {
 #[test]
 #[ignore]
 fn test_display() {
-    let chip8 = Chip8::new();
+    let mut chip8 = Chip8::new();
 
     chip8.display_clear();
     for x in 0..3 {
@@ -454,6 +454,12 @@ fn test_op_dxyn() {
             chip8.op_dxyn(j, j + 1, 5);
         }
     }
+
+    // if viewing area was bigger than display size
+    chip8.v[0xA] = 0x2F;
+    chip8.v[0xB] = 0x1F;
+    chip8.i = 0x0;
+    chip8.op_dxyn(0xA, 0xB, 5);
 
     chip8.display_flush();
 }

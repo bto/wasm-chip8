@@ -424,8 +424,14 @@ impl Chip8 {
         for byte in 0..n {
             let sprite = self.ram[self.i + byte];
             let y = self.v[y] as usize + byte;
+            if y > 31 {
+                break;
+            }
             for bit in 0..8 {
                 let x = self.v[x] as usize + bit;
+                if x > 63 {
+                    break;
+                }
                 let color = (sprite >> (7 - bit)) & 0x1;
                 self.v[0xF] |= color & self.vram[y][x];
                 self.vram[y][x] ^= color;
