@@ -120,9 +120,13 @@ impl Chip8 {
         loop {
             let keycode = self.get_key(&mut stdin);
             match keycode {
+                0xFD => (),
                 0xFE => break, // Esc key
-                0xFF => (),
-                _ => self.keycode = keycode,
+                0xFF => continue,
+                _ => {
+                    self.keycode = keycode;
+                    continue;
+                },
             }
 
             self.tick();
@@ -188,9 +192,6 @@ impl Chip8 {
     fn tick(&mut self) {
         let opcode = self.fetch();
         trace!("[{:04X}] {:04X}", self.pc, opcode);
-
-        let pc = self.run_opcode(opcode);
-        self.set_pc(&pc);
         trace!(
             "v0_7 = [{:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}]",
             self.v[0x0], self.v[0x1], self.v[0x2], self.v[0x3], self.v[0x4], self.v[0x5], self.v[0x6], self.v[0x7]
@@ -209,6 +210,10 @@ impl Chip8 {
             self.stack[0x8], self.stack[0x9], self.stack[0xA], self.stack[0xB], self.stack[0xC], self.stack[0xD], self.stack[0xE], self.stack[0xF],
         );
         trace!("sp = {:04X}", self.sp);
+        trace!("keycode = {:02X}", self.keycode);
+
+        let pc = self.run_opcode(opcode);
+        self.set_pc(&pc);
     }
 
     fn fetch(&self) -> u16 {
