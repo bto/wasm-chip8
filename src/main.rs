@@ -7,8 +7,10 @@ use std::time::Duration;
 #[macro_use] extern crate log;
 use log4rs;
 use rand;
+use termion::{AsyncReader, async_stdin};
+use termion::event::Key;
+use termion::input::TermRead;
 use termion::raw::IntoRawMode;
-use termion::async_stdin;
 
 const FONT_SET: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -113,7 +115,7 @@ impl Chip8 {
         self.display_flush();
 
         let _stdout = stdout().into_raw_mode().unwrap();
-        let mut stdin = async_stdin().bytes();
+        let mut stdin = async_stdin();
 
         loop {
             let keycode = self.get_key(&mut stdin);
@@ -126,34 +128,6 @@ impl Chip8 {
             self.tick();
 
             thread::sleep(Duration::from_millis(10));
-        }
-    }
-
-    fn get_key(&mut self, stdin: &mut std::io::Bytes<termion::AsyncReader>) -> u8 {
-        match stdin.next() {
-            Some(c) => {
-                match c.unwrap() {
-                    b'x' => 0x0,
-                    b'1' => 0x1,
-                    b'2' => 0x2,
-                    b'3' => 0x3,
-                    b'q' => 0x4,
-                    b'w' => 0x5,
-                    b'e' => 0x6,
-                    b'a' => 0x7,
-                    b's' => 0x8,
-                    b'd' => 0x9,
-                    b'z' => 0xA,
-                    b'c' => 0xB,
-                    b'4' => 0xC,
-                    b'r' => 0xD,
-                    b'f' => 0xE,
-                    b'v' => 0xF,
-                    0x1B => 0xFE, // Esc key
-                    _ => 0xFF,
-                }
-            },
-            None => 0xFF,
         }
     }
 
@@ -179,6 +153,36 @@ impl Chip8 {
         let x = x as u16 + 1;
         let y = y as u16 + 1;
         write!(stdout(), "{}", termion::cursor::Goto(x, y)).unwrap();
+    }
+
+    fn get_key(&mut self, stdin: &mut AsyncReader) -> u8 {
+        let opt = stdin.keys().next();
+        let key = match opt {
+            Some(c) => c.unwrap(),
+            None => return 0xFF,
+        };
+
+        match key {
+            Key::Char('x') => 0x00,
+            Key::Char('1') => 0x01,
+            Key::Char('2') => 0x02,
+            Key::Char('3') => 0x03,
+            Key::Char('q') => 0x04,
+            Key::Char('w') => 0x05,
+            Key::Char('e') => 0x06,
+            Key::Char('a') => 0x07,
+            Key::Char('s') => 0x08,
+            Key::Char('d') => 0x09,
+            Key::Char('z') => 0x0A,
+            Key::Char('c') => 0x0B,
+            Key::Char('4') => 0x0C,
+            Key::Char('r') => 0x0D,
+            Key::Char('f') => 0x0E,
+            Key::Char('v') => 0x0F,
+            Key::Char('\n') => 0xFD,
+            Key::Esc => 0xFE,
+            _ => 0xFF,
+        }
     }
 
     fn tick(&mut self) {
