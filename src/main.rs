@@ -7,7 +7,7 @@ use std::time::Duration;
 #[macro_use] extern crate log;
 use log4rs;
 use rand;
-use termion::{AsyncReader, async_stdin};
+use termion::{AsyncReader, async_stdin, color};
 use termion::event::Key;
 use termion::input::TermRead;
 use termion::raw::IntoRawMode;
@@ -144,10 +144,10 @@ impl Chip8 {
     fn display_draw(&mut self, x: usize, y: usize, color: u8) {
         trace!("draw {}, {}, {}", x, y, color);
         self.display_goto(x, y);
-        if color != 0 {
-            write!(stdout(), "0").unwrap();
+        if color == 0 {
+            write!(stdout(), "{} {}", color::Bg(color::Black), color::Bg(color::Reset)).unwrap();
         } else {
-            write!(stdout(), " ").unwrap();
+            write!(stdout(), "{} {}", color::Bg(color::White), color::Bg(color::Reset)).unwrap();
         }
     }
 
