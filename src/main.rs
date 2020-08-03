@@ -120,13 +120,13 @@ impl Chip8 {
         loop {
             let keycode = self.get_key(&mut stdin);
             match keycode {
-                0xFD => (),
+                0x0..=0xF => self.keycode = keycode,
                 0xFE => break, // Esc key
-                0xFF => continue,
-                _ => {
-                    self.keycode = keycode;
-                    continue;
-                },
+                _ => (),
+            };
+
+            if keycode != 0xFD { // Not Enter key
+                continue;
             }
 
             self.tick();
