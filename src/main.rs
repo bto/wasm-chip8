@@ -125,13 +125,15 @@ impl Chip8 {
                 _ => (),
             };
 
+            /* debug
             if keycode != 0xFD { // Not Enter key
                 continue;
             }
+            */
 
             self.tick();
 
-            thread::sleep(Duration::from_millis(10));
+            thread::sleep(Duration::from_millis(1));
         }
     }
 
@@ -478,7 +480,7 @@ impl Chip8 {
                 let color = (sprite >> (7 - bit)) & 0x1;
                 self.v[0xF] |= color & self.vram[y][x];
                 self.vram[y][x] ^= color;
-                self.display_draw(x, y, color);
+                self.display_draw(x, y, self.vram[y][x]);
             }
         }
         self.display_flush();
