@@ -302,24 +302,31 @@ fn test_op_8xy4() {
 fn test_op_8xy5() {
     let mut chip8 = Chip8::new();
 
-    // not borrow
+    // Vx > Vy
     chip8.v[0] = 0x3;
     chip8.v[1] = 0x1;
-    chip8.v[0xF] = 0x0;
     let pc = chip8.op_8xy5(0, 1);
     assert_eq!(pc, Pc::Inc);
-    assert_eq!(chip8.v[0], 0x2);
-    assert_eq!(chip8.v[1], 0x1);
+    assert_eq!(chip8.v[0], 0x02);
+    assert_eq!(chip8.v[1], 0x01);
     assert_eq!(chip8.v[0xF], 0x1);
 
-    // borrow
-    chip8.v[1] = 0x0;
-    chip8.v[2] = 0x1;
-    chip8.v[0xF] = 0x1;
+    // Vx == Vy
+    chip8.v[1] = 0x2;
+    chip8.v[2] = 0x2;
     let pc = chip8.op_8xy5(1, 2);
     assert_eq!(pc, Pc::Inc);
-    assert_eq!(chip8.v[1], 0xFF);
-    assert_eq!(chip8.v[2], 0x1);
+    assert_eq!(chip8.v[1], 0x00);
+    assert_eq!(chip8.v[2], 0x02);
+    assert_eq!(chip8.v[0xF], 0x0);
+
+    // Vx < Vy
+    chip8.v[2] = 0x1;
+    chip8.v[3] = 0x3;
+    let pc = chip8.op_8xy5(2, 3);
+    assert_eq!(pc, Pc::Inc);
+    assert_eq!(chip8.v[2], 0xFE);
+    assert_eq!(chip8.v[3], 0x03);
     assert_eq!(chip8.v[0xF], 0x0);
 }
 
@@ -348,25 +355,32 @@ fn test_op_8x06() {
 fn test_op_8xy7() {
     let mut chip8 = Chip8::new();
 
-    // not borrow
-    chip8.v[0] = 0x1;
-    chip8.v[1] = 0x3;
-    chip8.v[0xF] = 0x0;
+    // Vx > Vy
+    chip8.v[0] = 0x3;
+    chip8.v[1] = 0x1;
     let pc = chip8.op_8xy7(0, 1);
     assert_eq!(pc, Pc::Inc);
-    assert_eq!(chip8.v[0], 0x2);
-    assert_eq!(chip8.v[1], 0x3);
-    assert_eq!(chip8.v[0xF], 0x1);
+    assert_eq!(chip8.v[0], 0xFE);
+    assert_eq!(chip8.v[1], 0x01);
+    assert_eq!(chip8.v[0xF], 0x0);
 
-    // borrow
-    chip8.v[1] = 0x1;
-    chip8.v[2] = 0x0;
-    chip8.v[0xF] = 0x1;
+    // Vx == Vy
+    chip8.v[1] = 0x2;
+    chip8.v[2] = 0x2;
     let pc = chip8.op_8xy7(1, 2);
     assert_eq!(pc, Pc::Inc);
-    assert_eq!(chip8.v[1], 0xFF);
-    assert_eq!(chip8.v[2], 0x0);
+    assert_eq!(chip8.v[1], 0x00);
+    assert_eq!(chip8.v[2], 0x02);
     assert_eq!(chip8.v[0xF], 0x0);
+
+    // Vx < Vy
+    chip8.v[2] = 0x1;
+    chip8.v[3] = 0x3;
+    let pc = chip8.op_8xy7(2, 3);
+    assert_eq!(pc, Pc::Inc);
+    assert_eq!(chip8.v[2], 0x02);
+    assert_eq!(chip8.v[3], 0x03);
+    assert_eq!(chip8.v[0xF], 0x1);
 }
 
 #[test]

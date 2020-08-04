@@ -404,9 +404,12 @@ impl Chip8 {
     // SUB Vx, Vy: Set Vx = Vx - Vy, set VF = NOT borrow
     fn op_8xy5(&mut self, x: usize, y: usize) -> Pc {
         trace!("SUB V{:X} V{:X}", x, y);
-        let vx = self.v[x] as i16 - self.v[y] as i16;
-        self.v[x] = vx as u8;
-        self.v[0xF] = (!vx & 0x100 >> 8) as u8;
+        self.v[0xF] = if self.v[x] > self.v[y] {
+            1
+        } else {
+            0
+        };
+        self.v[x] = self.v[x].wrapping_sub(self.v[y]);
         Pc::Inc
     }
 
@@ -421,9 +424,12 @@ impl Chip8 {
     // SUBN Vx, Vy: Set Vx = Vy - Vx, set VF = NOT borrow
     fn op_8xy7(&mut self, x: usize, y: usize) -> Pc {
         trace!("SUBN V{:X} V{:X}", x, y);
-        let vx = self.v[y] as i16 - self.v[x] as i16;
-        self.v[x] = vx as u8;
-        self.v[0xF] = (!vx & 0x100 >> 8) as u8;
+        self.v[0xF] = if self.v[y] > self.v[x] {
+            1
+        } else {
+            0
+        };
+        self.v[x] = self.v[y].wrapping_sub(self.v[x]);
         Pc::Inc
     }
 
