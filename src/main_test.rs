@@ -26,10 +26,10 @@ fn test_display() {
     chip8.display_clear();
     for x in 0..3 {
         for y in 0..3 {
-            chip8.display_draw(x, y, 1);
+            chip8.display_draw(x, y, true);
         }
     }
-    chip8.display_draw(1, 1, 0);
+    chip8.display_draw(1, 1, false);
     chip8.display_goto(0, 4);
 }
 

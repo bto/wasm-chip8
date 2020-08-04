@@ -82,7 +82,7 @@ struct Chip8 {
 
     delay_timer: u8,
     keycode: u8,
-    vram: [[u8; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
+    vram: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
 }
 
 impl Chip8 {
@@ -96,7 +96,7 @@ impl Chip8 {
             pc: START_ADDR,
             delay_timer: 0,
             keycode: 0xFF,
-            vram: [[0u8; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
+            vram: [[false; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
         }
     }
 
@@ -152,13 +152,13 @@ impl Chip8 {
         write!(stdout(), "{}{}", termion::clear::All, termion::cursor::Hide).unwrap();
     }
 
-    fn display_draw(&self, x: usize, y: usize, color: u8) {
+    fn display_draw(&self, x: usize, y: usize, color: bool) {
         trace!("draw {}, {}, {}", x, y, color);
         self.display_goto(x, y);
-        if color == 0 {
-            write!(stdout(), "{} {}", color::Bg(color::Black), color::Bg(color::Reset)).unwrap();
-        } else {
+        if color {
             write!(stdout(), "{} {}", color::Bg(color::White), color::Bg(color::Reset)).unwrap();
+        } else {
+            write!(stdout(), "{} {}", color::Bg(color::Black), color::Bg(color::Reset)).unwrap();
         }
     }
 
@@ -285,7 +285,7 @@ impl Chip8 {
         self.display_clear();
         for y in 0..DISPLAY_HEIGHT {
             for x in 0..DISPLAY_WIDTH {
-                self.vram[y][x] = 0;
+                self.vram[y][x] = false;
             }
         }
         Pc::Inc
@@ -462,8 +462,8 @@ impl Chip8 {
                 if x >= DISPLAY_WIDTH {
                     break;
                 }
-                let color = (sprite >> (7 - bit)) & 0x1;
-                self.v[0xF] |= color & self.vram[y][x];
+                let color = ((sprite >> (7 - bit)) & 0x1) != 0;
+                self.v[0xF] |= (color & self.vram[y][x]) as u8;
                 self.vram[y][x] ^= color;
                 self.display_draw(x, y, self.vram[y][x]);
             }
