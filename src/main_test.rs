@@ -52,11 +52,17 @@ fn test_fetch() {
 }
 
 #[test]
-#[ignore]
 fn test_op_00e0() {
     let mut chip8 = Chip8::new();
+
+    chip8.vram[0][1] = true;
+    chip8.vram[2][3] = true;
+    chip8.vram_changed = false;
     let pc = chip8.op_00e0();
     assert_eq!(pc, Pc::Inc);
+    assert_eq!(chip8.vram[0][1], false);
+    assert_eq!(chip8.vram[2][3], false);
+    assert_eq!(chip8.vram_changed, true);
 }
 
 #[test]
