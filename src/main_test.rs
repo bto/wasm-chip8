@@ -4,9 +4,9 @@ use super::*;
 #[test]
 fn test_new() {
     let chip8 = Chip8::new();
-    assert_eq!(chip8.ram.len(), 0xFFF);
+    assert_eq!(chip8.ram.len(), MEMSIZE);
     assert_eq!(chip8.v[0], 0);
-    assert_eq!(chip8.pc, 0x200);
+    assert_eq!(chip8.pc, START_ADDR);
 }
 
 #[test]
@@ -37,8 +37,8 @@ fn test_display() {
 fn test_fetch() {
     let mut chip8 = Chip8::new();
 
-    chip8.ram[0x200] = 0x01;
-    chip8.ram[0x201] = 0x23;
+    chip8.ram[START_ADDR] = 0x01;
+    chip8.ram[START_ADDR + 1] = 0x23;
     let opcode = chip8.fetch();
     assert_eq!(opcode, 0x0123);
 
@@ -60,7 +60,7 @@ fn test_op_00e0() {
 #[test]
 fn test_op_00ee_2nnn() {
     let mut chip8 = Chip8::new();
-    assert_eq!(chip8.pc, 0x200);
+    assert_eq!(chip8.pc, START_ADDR);
     assert_eq!(chip8.sp, 0);
 
     let pc = chip8.op_2nnn(0x280);
@@ -68,14 +68,14 @@ fn test_op_00ee_2nnn() {
     assert_eq!(pc, Pc::Jump(0x280));
     assert_eq!(chip8.pc, 0x280);
     assert_eq!(chip8.sp, 1);
-    assert_eq!(chip8.stack[0], 0x200);
+    assert_eq!(chip8.stack[0], START_ADDR);
 
     let pc = chip8.op_2nnn(0x300);
     chip8.set_pc(&pc);
     assert_eq!(pc, Pc::Jump(0x300));
     assert_eq!(chip8.pc, 0x300);
     assert_eq!(chip8.sp, 2);
-    assert_eq!(chip8.stack[0], 0x200);
+    assert_eq!(chip8.stack[0], START_ADDR);
     assert_eq!(chip8.stack[1], 0x280);
 
     let pc = chip8.op_00ee();
@@ -83,12 +83,12 @@ fn test_op_00ee_2nnn() {
     assert_eq!(pc, Pc::Jump(0x282));
     assert_eq!(chip8.pc, 0x282);
     assert_eq!(chip8.sp, 1);
-    assert_eq!(chip8.stack[0], 0x200);
+    assert_eq!(chip8.stack[0], START_ADDR);
 
     let pc = chip8.op_00ee();
     chip8.set_pc(&pc);
-    assert_eq!(pc, Pc::Jump(0x202));
-    assert_eq!(chip8.pc, 0x202);
+    assert_eq!(pc, Pc::Jump(START_ADDR + 2));
+    assert_eq!(chip8.pc, START_ADDR + 2);
     assert_eq!(chip8.sp, 0);
 }
 

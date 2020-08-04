@@ -31,6 +31,11 @@ const FONT_SET: [u8; 80] = [
     0xF0, 0x80, 0xF0, 0x80, 0x80, // F
 ];
 
+const DISPLAY_HEIGHT: usize = 32;
+const DISPLAY_WIDTH: usize = 64;
+const MEMSIZE: usize = 0xFFF;
+const START_ADDR: usize = 0x200;
+
 fn main() {
     log4rs::init_file("logger.yml", Default::default()).unwrap();
     let mut chip8 = Chip8::new();
@@ -58,7 +63,7 @@ impl Pc {
 
 struct Chip8 {
     // 4KB of RAM
-    ram: [u8; 0xFFF],
+    ram: [u8; MEMSIZE],
 
     // General purpose 8-bit registers
     v: [u8; 16],
@@ -77,21 +82,21 @@ struct Chip8 {
 
     delay_timer: u8,
     keycode: u8,
-    vram: [[u8; 64]; 32],
+    vram: [[u8; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
 }
 
 impl Chip8 {
     fn new() -> Self {
         Self {
-            ram: [0u8; 0xFFF],
+            ram: [0u8; MEMSIZE],
             v: [0; 16],
             i: 0,
             stack: [0; 16],
             sp: 0,
-            pc: 0x200,
+            pc: START_ADDR,
             delay_timer: 0,
             keycode: 0xFF,
-            vram: [[0u8; 64]; 32],
+            vram: [[0u8; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
         }
     }
 
@@ -109,7 +114,7 @@ impl Chip8 {
     fn load_rom(&mut self) {
         let args: Vec<String> = env::args().collect();
         let mut f = File::open(args[1].as_str()).expect("File not found");
-        f.read(&mut self.ram[0x200..]).unwrap();
+        f.read(&mut self.ram[START_ADDR..]).unwrap();
     }
 
     fn run(&mut self) {
@@ -278,8 +283,8 @@ impl Chip8 {
     fn op_00e0(&mut self) -> Pc {
         trace!("CLS");
         self.display_clear();
-        for y in 0..32 {
-            for x in 0..64 {
+        for y in 0..DISPLAY_HEIGHT {
+            for x in 0..DISPLAY_WIDTH {
                 self.vram[y][x] = 0;
             }
         }
@@ -449,12 +454,12 @@ impl Chip8 {
         for byte in 0..n {
             let sprite = self.ram[self.i + byte];
             let y = self.v[y] as usize + byte;
-            if y > 31 {
+            if y >= DISPLAY_HEIGHT {
                 break;
             }
             for bit in 0..8 {
                 let x = self.v[x] as usize + bit;
-                if x > 63 {
+                if x >= DISPLAY_WIDTH {
                     break;
                 }
                 let color = (sprite >> (7 - bit)) & 0x1;
