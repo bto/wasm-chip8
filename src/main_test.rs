@@ -447,24 +447,45 @@ fn test_op_cxkk() {
 }
 
 #[test]
-#[ignore]
 fn test_op_dxyn() {
     let mut chip8 = Chip8::new();
-    chip8.load_fontset();
-    chip8.display_clear();
 
-    for i in 0..4 {
-        for j in 0..4 {
-            chip8.v[j] = j as u8 * 5;
-            chip8.v[j + 1] = i * 6;
-            chip8.i = i as usize * 20 + j * 5;
-            chip8.op_dxyn(j, j + 1, 5);
-        }
-    }
+    chip8.ram[0x0] = 0b11000000;
+    chip8.ram[0x1] = 0b00000000;
+    chip8.v[0x0] = 0;
+    chip8.i = 0x0;
+
+    chip8.vram[0][0] = true;
+    chip8.vram[0][1] = false;
+    chip8.vram[1][0] = true;
+    chip8.vram[1][1] = false;
+    chip8.vram_changed = false;
+    let pc = chip8.op_dxyn(0, 0, 2);
+    assert_eq!(pc, Pc::Inc);
+    assert_eq!(chip8.vram[0][0], false);
+    assert_eq!(chip8.vram[0][1], true);
+    assert_eq!(chip8.vram[1][0], true);
+    assert_eq!(chip8.vram[1][1], false);
+    assert_eq!(chip8.v[0xF], 1);
+    assert_eq!(chip8.vram_changed, true);
+
+    chip8.vram[0][0] = false;
+    chip8.vram[0][1] = false;
+    chip8.vram[1][0] = true;
+    chip8.vram[1][1] = false;
+    chip8.vram_changed = false;
+    let pc = chip8.op_dxyn(0, 0, 2);
+    assert_eq!(pc, Pc::Inc);
+    assert_eq!(chip8.vram[0][0], true);
+    assert_eq!(chip8.vram[0][1], true);
+    assert_eq!(chip8.vram[1][0], true);
+    assert_eq!(chip8.vram[1][1], false);
+    assert_eq!(chip8.v[0xF], 0);
+    assert_eq!(chip8.vram_changed, true);
 
     // if viewing area was bigger than display size
-    chip8.v[0xA] = 0x2F;
-    chip8.v[0xB] = 0x1F;
+    chip8.v[0xA] = 0xFF;
+    chip8.v[0xB] = 0xFF;
     chip8.i = 0x0;
     chip8.op_dxyn(0xA, 0xB, 5);
 }
