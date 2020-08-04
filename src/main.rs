@@ -127,11 +127,15 @@ impl Chip8 {
             };
             /* debug
             if keycode != 0xFD { // Not Enter key
+                self.delay_timer = 0;
                 continue;
             }
             */
 
-            self.tick();
+            self.dec_delay_timer();
+            let opcode = self.fetch();
+            let pc = self.run_opcode(opcode);
+            self.set_pc(&pc);
             self.trace_status();
             thread::sleep(Duration::from_millis(1));
         }
@@ -193,14 +197,6 @@ impl Chip8 {
             Key::Esc => 0xFE,
             _ => 0xFF,
         }
-    }
-
-    fn tick(&mut self) {
-        let opcode = self.fetch();
-        self.dec_delay_timer();
-        let pc = self.run_opcode(opcode);
-        self.set_pc(&pc);
-        self.trace_status();
     }
 
     fn fetch(&self) -> u16 {
