@@ -126,7 +126,6 @@ impl Chip8 {
                 0xFE => break, // Esc key
                 _ => (),
             };
-
             /* debug
             if keycode != 0xFD { // Not Enter key
                 continue;
@@ -134,7 +133,7 @@ impl Chip8 {
             */
 
             self.tick();
-
+            self.trace_status();
             thread::sleep(Duration::from_millis(1));
         }
     }
@@ -195,34 +194,16 @@ impl Chip8 {
 
     fn tick(&mut self) {
         let opcode = self.fetch();
-        trace!("[{:04X}] {:04X}", self.pc, opcode);
-        trace!(
-            "v0_7 = [{:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}]",
-            self.v[0x0], self.v[0x1], self.v[0x2], self.v[0x3], self.v[0x4], self.v[0x5], self.v[0x6], self.v[0x7]
-        );
-        trace!(
-            "v8_F = [{:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}]",
-            self.v[0x8], self.v[0x9], self.v[0xA], self.v[0xB], self.v[0xC], self.v[0xD], self.v[0xE], self.v[0xF]
-        );
-        trace!("i = {:04X}", self.i);
-        trace!(
-            "stack0_7 = [{:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}]",
-            self.stack[0x0], self.stack[0x1], self.stack[0x2], self.stack[0x3], self.stack[0x4], self.stack[0x5], self.stack[0x6], self.stack[0x7],
-        );
-        trace!(
-            "stack8_F = [{:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}]",
-            self.stack[0x8], self.stack[0x9], self.stack[0xA], self.stack[0xB], self.stack[0xC], self.stack[0xD], self.stack[0xE], self.stack[0xF],
-        );
-        trace!("sp = {:04X}", self.sp);
-        trace!("keycode = {:02X}", self.keycode);
-
         self.dec_delay_timer();
         let pc = self.run_opcode(opcode);
         self.set_pc(&pc);
+        self.trace_status();
     }
 
     fn fetch(&self) -> u16 {
-        (self.ram[self.pc] as u16) << 8 | self.ram[self.pc + 1] as u16
+        let opcode = (self.ram[self.pc] as u16) << 8 | self.ram[self.pc + 1] as u16;
+        trace!("[{:04X}] {:04X}", self.pc, opcode);
+        opcode
     }
 
     fn dec_delay_timer(&mut self) {
@@ -282,14 +263,6 @@ impl Chip8 {
             (0x0F, _, 0x05, 0x05) => self.op_fx55(x),
             (0x0F, _, 0x06, 0x05) => self.op_fx65(x),
             _ => panic!("{:04X}: {:04X} is invalid opcode", self.pc, opcode)
-        }
-    }
-
-    fn set_pc(&mut self, pc: &Pc) {
-        match *pc {
-            Pc::Inc => self.pc +=2,
-            Pc::Skip => self.pc += 4,
-            Pc::Jump(addr) => self.pc = addr,
         }
     }
 
@@ -583,6 +556,36 @@ impl Chip8 {
             self.v[i] = self.ram[self.i + i];
         }
         Pc::Inc
+    }
+
+    fn set_pc(&mut self, pc: &Pc) {
+        match *pc {
+            Pc::Inc => self.pc +=2,
+            Pc::Skip => self.pc += 4,
+            Pc::Jump(addr) => self.pc = addr,
+        }
+    }
+
+    fn trace_status(&self) {
+        trace!(
+            "v0_7 = [{:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}]",
+            self.v[0x0], self.v[0x1], self.v[0x2], self.v[0x3], self.v[0x4], self.v[0x5], self.v[0x6], self.v[0x7]
+        );
+        trace!(
+            "v8_F = [{:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}]",
+            self.v[0x8], self.v[0x9], self.v[0xA], self.v[0xB], self.v[0xC], self.v[0xD], self.v[0xE], self.v[0xF]
+        );
+        trace!("i = {:04X}", self.i);
+        trace!(
+            "stack0_7 = [{:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}]",
+            self.stack[0x0], self.stack[0x1], self.stack[0x2], self.stack[0x3], self.stack[0x4], self.stack[0x5], self.stack[0x6], self.stack[0x7],
+        );
+        trace!(
+            "stack8_F = [{:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}]",
+            self.stack[0x8], self.stack[0x9], self.stack[0xA], self.stack[0xB], self.stack[0xC], self.stack[0xD], self.stack[0xE], self.stack[0xF],
+        );
+        trace!("sp = {:04X}", self.sp);
+        trace!("keycode = {:02X}", self.keycode);
     }
 }
 
