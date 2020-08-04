@@ -500,16 +500,16 @@ impl Chip8 {
     }
 
     // LD Vx, K: Wait for a key press, store the value of the key in Vx
-    fn op_fx0a(&mut self, x: usize) -> Pc {
+    fn op_fx0a(&self, x: usize) -> Pc {
         trace!("LD V{:X}, K", x);
-        self.delay_timer = self.v[x];
-        Pc::Inc
+        self.op_not_impl()
     }
 
     // LD DT, Vx: Set delay timer = Vx
-    fn op_fx15(&self, x: usize) -> Pc {
+    fn op_fx15(&mut self, x: usize) -> Pc {
         trace!("LD DT, V{:X}", x);
-        self.op_not_impl()
+        self.delay_timer = self.v[x];
+        Pc::Inc
     }
 
     // LD ST, Vx: Set sound timer = Vx
