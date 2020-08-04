@@ -114,7 +114,6 @@ impl Chip8 {
 
     fn run(&mut self) {
         self.display_clear();
-        self.display_flush();
 
         let _stdout = stdout().into_raw_mode().unwrap();
         let mut stdin = async_stdin();
@@ -152,10 +151,6 @@ impl Chip8 {
         } else {
             write!(stdout(), "{} {}", color::Bg(color::White), color::Bg(color::Reset)).unwrap();
         }
-    }
-
-    fn display_flush(&self) {
-        stdout().flush().unwrap();
     }
 
     fn display_goto(&self, x: usize, y: usize) {
@@ -287,7 +282,6 @@ impl Chip8 {
     fn op_00e0(&mut self) -> Pc {
         trace!("CLS");
         self.display_clear();
-        self.display_flush();
         for y in 0..32 {
             for x in 0..64 {
                 self.vram[y][x] = 0;
@@ -473,7 +467,6 @@ impl Chip8 {
                 self.display_draw(x, y, self.vram[y][x]);
             }
         }
-        self.display_flush();
         Pc::Inc
     }
 

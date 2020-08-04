@@ -31,7 +31,6 @@ fn test_display() {
     }
     chip8.display_draw(1, 1, 0);
     chip8.display_goto(0, 4);
-    chip8.display_flush();
 }
 
 #[test]
@@ -460,8 +459,6 @@ fn test_op_dxyn() {
     chip8.v[0xB] = 0x1F;
     chip8.i = 0x0;
     chip8.op_dxyn(0xA, 0xB, 5);
-
-    chip8.display_flush();
 }
 
 #[test]
