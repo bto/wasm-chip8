@@ -33,8 +33,6 @@ fn test_display() {
 
     chip8.vram[1][1] = false;
     chip8.display_draw();
-
-    chip8.display_goto(0, 4);
 }
 
 #[test]

@@ -162,29 +162,30 @@ impl Chip8 {
     }
 
     fn display_draw(&self) {
+        let mut output = String::new();
         for y in 0..DISPLAY_HEIGHT {
+            output += &termion::cursor::Goto(1, y as u16 + 1).to_string();
             for x in 0..DISPLAY_WIDTH {
-                self.display_goto(x, y);
                 if self.vram[y][x] {
-                    write!(stdout(), "{} {}", color::Bg(color::White), color::Bg(color::Reset)).unwrap();
+                    output += &color::Bg(color::White).to_string();
                 } else {
-                    write!(stdout(), "{} {}", color::Bg(color::Black), color::Bg(color::Reset)).unwrap();
+                    output += &color::Bg(color::Black).to_string();
                 }
+                output += " ";
             }
         }
+        write!(stdout(), "{}", output).unwrap();
         stdout().flush().unwrap();
     }
 
-    fn display_goto(&self, x: usize, y: usize) {
-        let x = x as u16 + 1;
-        let y = y as u16 + 1;
-        write!(stdout(), "{}", termion::cursor::Goto(x, y)).unwrap();
-    }
-
     fn display_restore(&self) {
-        self.display_clear();
-        self.display_goto(1, 1);
-        write!(stdout(), "{}", termion::cursor::Show).unwrap();
+        write!(
+            stdout(),
+            "{}{}{}",
+            termion::clear::All,
+            termion::cursor::Goto(1, 1),
+            termion::cursor::Show
+        ).unwrap();
     }
 
     fn get_key(&self, stdin: &mut AsyncReader) -> u8 {
