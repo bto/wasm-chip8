@@ -465,6 +465,32 @@ fn test_op_dxyn() {
 }
 
 #[test]
+fn test_op_fx07_fx0a() {
+    let mut chip8 = Chip8::new();
+
+    chip8.v[0] = 1;
+    let pc = chip8.op_fx0a(0);
+    assert_eq!(pc, Pc::Inc);
+    assert_eq!(chip8.delay_timer, 1);
+
+    let pc = chip8.op_fx07(1);
+    assert_eq!(pc, Pc::Inc);
+    assert_eq!(chip8.delay_timer, 1);
+    assert_eq!(chip8.v[1], 1);
+
+    chip8.dec_delay_timer();
+    assert_eq!(chip8.delay_timer, 0);
+
+    chip8.dec_delay_timer();
+    assert_eq!(chip8.delay_timer, 0);
+
+    let pc = chip8.op_fx07(0);
+    assert_eq!(pc, Pc::Inc);
+    assert_eq!(chip8.delay_timer, 0);
+    assert_eq!(chip8.v[0], 0);
+}
+
+#[test]
 fn test_op_fx1e() {
     let mut chip8 = Chip8::new();
 

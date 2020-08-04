@@ -75,8 +75,9 @@ struct Chip8 {
     // Program counter
     pc: usize,
 
-    vram: [[u8; 64]; 32],
+    delay_timer: u8,
     keycode: u8,
+    vram: [[u8; 64]; 32],
 }
 
 impl Chip8 {
@@ -88,8 +89,9 @@ impl Chip8 {
             stack: [0; 16],
             sp: 0,
             pc: 0x200,
-            vram: [[0u8; 64]; 32],
+            delay_timer: 0,
             keycode: 0xFF,
+            vram: [[0u8; 64]; 32],
         }
     }
 
@@ -214,12 +216,19 @@ impl Chip8 {
         trace!("sp = {:04X}", self.sp);
         trace!("keycode = {:02X}", self.keycode);
 
+        self.dec_delay_timer();
         let pc = self.run_opcode(opcode);
         self.set_pc(&pc);
     }
 
     fn fetch(&self) -> u16 {
         (self.ram[self.pc] as u16) << 8 | self.ram[self.pc + 1] as u16
+    }
+
+    fn dec_delay_timer(&mut self) {
+        if self.delay_timer > 0 {
+            self.delay_timer -= 1;
+        }
     }
 
     fn run_opcode(&mut self, opcode: u16) -> Pc {
@@ -510,15 +519,17 @@ impl Chip8 {
     }
 
     // LD Vx, DT: Set Vx = delay timer value
-    fn op_fx07(&self, x: usize) -> Pc {
+    fn op_fx07(&mut self, x: usize) -> Pc {
         trace!("LD V{:X}, DT", x);
-        self.op_not_impl()
+        self.v[x] = self.delay_timer;
+        Pc::Inc
     }
 
     // LD Vx, K: Wait for a key press, store the value of the key in Vx
-    fn op_fx0a(&self, x: usize) -> Pc {
+    fn op_fx0a(&mut self, x: usize) -> Pc {
         trace!("LD V{:X}, K", x);
-        self.op_not_impl()
+        self.delay_timer = self.v[x];
+        Pc::Inc
     }
 
     // LD DT, Vx: Set delay timer = Vx
