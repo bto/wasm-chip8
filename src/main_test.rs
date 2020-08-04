@@ -21,15 +21,19 @@ fn test_load_fontset() {
 #[test]
 #[ignore]
 fn test_display() {
-    let chip8 = Chip8::new();
+    let mut chip8 = Chip8::new();
 
     chip8.display_clear();
     for x in 0..3 {
         for y in 0..3 {
-            chip8.display_draw(x, y, true);
+            chip8.vram[y][x] = true;
         }
     }
-    chip8.display_draw(1, 1, false);
+    chip8.display_draw();
+
+    chip8.vram[1][1] = false;
+    chip8.display_draw();
+
     chip8.display_goto(0, 4);
 }
 
