@@ -587,6 +587,7 @@ impl Chip8 {
         );
         trace!("sp = {:04X}", self.sp);
         trace!("keycode = {:02X}", self.keycode);
+        trace!("delay_timer = {}", self.delay_timer);
     }
 }
 
