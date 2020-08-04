@@ -83,6 +83,8 @@ struct Chip8 {
     delay_timer: u8,
     sound_timer: u8,
     keycode: u8,
+    key_waiting: bool,
+    key_register: usize,
     vram: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
     vram_changed: bool,
 }
@@ -99,6 +101,8 @@ impl Chip8 {
             delay_timer: 0,
             sound_timer: 0,
             keycode: 0xFF,
+            key_waiting: false,
+            key_register: 0,
             vram: [[false; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
             vram_changed: false,
         }
@@ -128,6 +132,8 @@ impl Chip8 {
         let mut stdin = async_stdin();
 
         loop {
+            thread::sleep(Duration::from_millis(1));
+
             let keycode = self.get_key(&mut stdin);
             match keycode {
                 0x0..=0xF => self.keycode = keycode,
@@ -141,6 +147,16 @@ impl Chip8 {
             }
             */
 
+            if self.key_waiting {
+                if self.keycode == 0xFF {
+                    continue;
+                } else {
+                    self.v[self.key_register] = self.keycode;
+                    self.key_waiting = false;
+                    self.keycode = 0xFF;
+                }
+            }
+
             self.dec_delay_timer();
             self.sound();
 
@@ -153,8 +169,6 @@ impl Chip8 {
                 self.display_draw();
                 self.vram_changed = false;
             }
-
-            thread::sleep(Duration::from_millis(1));
         }
 
         self.display_restore();
@@ -531,9 +545,11 @@ impl Chip8 {
     }
 
     // LD Vx, K: Wait for a key press, store the value of the key in Vx
-    fn op_fx0a(&self, x: usize) -> Pc {
+    fn op_fx0a(&mut self, x: usize) -> Pc {
         trace!("LD V{:X}, K", x);
-        self.op_not_impl()
+        self.key_waiting = true;
+        self.key_register = x;
+        Pc::Inc
     }
 
     // LD DT, Vx: Set delay timer = Vx
