@@ -136,13 +136,15 @@ impl Chip8 {
             self.trace_status();
             thread::sleep(Duration::from_millis(1));
         }
+
+        self.display_restore();
     }
 
-    fn display_clear(&mut self) {
-        write!(stdout(), "{}", termion::clear::All).unwrap();
+    fn display_clear(&self) {
+        write!(stdout(), "{}{}", termion::clear::All, termion::cursor::Hide).unwrap();
     }
 
-    fn display_draw(&mut self, x: usize, y: usize, color: u8) {
+    fn display_draw(&self, x: usize, y: usize, color: u8) {
         trace!("draw {}, {}, {}", x, y, color);
         self.display_goto(x, y);
         if color == 0 {
@@ -152,17 +154,23 @@ impl Chip8 {
         }
     }
 
-    fn display_flush(&mut self) {
+    fn display_flush(&self) {
         stdout().flush().unwrap();
     }
 
-    fn display_goto(&mut self, x: usize, y: usize) {
+    fn display_goto(&self, x: usize, y: usize) {
         let x = x as u16 + 1;
         let y = y as u16 + 1;
         write!(stdout(), "{}", termion::cursor::Goto(x, y)).unwrap();
     }
 
-    fn get_key(&mut self, stdin: &mut AsyncReader) -> u8 {
+    fn display_restore(&self) {
+        self.display_clear();
+        self.display_goto(1, 1);
+        write!(stdout(), "{}", termion::cursor::Show).unwrap();
+    }
+
+    fn get_key(&self, stdin: &mut AsyncReader) -> u8 {
         let opt = stdin.keys().next();
         let key = match opt {
             Some(c) => c.unwrap(),

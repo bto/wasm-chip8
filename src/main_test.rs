@@ -21,7 +21,7 @@ fn test_load_fontset() {
 #[test]
 #[ignore]
 fn test_display() {
-    let mut chip8 = Chip8::new();
+    let chip8 = Chip8::new();
 
     chip8.display_clear();
     for x in 0..3 {
