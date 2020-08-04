@@ -81,6 +81,7 @@ struct Chip8 {
     pc: usize,
 
     delay_timer: u8,
+    sound_timer: u8,
     keycode: u8,
     vram: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
     vram_changed: bool,
@@ -96,6 +97,7 @@ impl Chip8 {
             sp: 0,
             pc: START_ADDR,
             delay_timer: 0,
+            sound_timer: 0,
             keycode: 0xFF,
             vram: [[false; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
             vram_changed: false,
@@ -140,6 +142,7 @@ impl Chip8 {
             */
 
             self.dec_delay_timer();
+            self.sound();
 
             let opcode = self.fetch();
             let pc = self.run_opcode(opcode);
@@ -218,16 +221,23 @@ impl Chip8 {
         }
     }
 
-    fn fetch(&self) -> u16 {
-        let opcode = (self.ram[self.pc] as u16) << 8 | self.ram[self.pc + 1] as u16;
-        trace!("[{:04X}] {:04X}", self.pc, opcode);
-        opcode
-    }
-
     fn dec_delay_timer(&mut self) {
         if self.delay_timer > 0 {
             self.delay_timer -= 1;
         }
+    }
+
+    fn sound(&mut self) {
+        if self.sound_timer > 0 {
+            write!(stdout(), "{}", 0x07u8 as char).unwrap();
+            self.sound_timer -= 1;
+        }
+    }
+
+    fn fetch(&self) -> u16 {
+        let opcode = (self.ram[self.pc] as u16) << 8 | self.ram[self.pc + 1] as u16;
+        trace!("[{:04X}] {:04X}", self.pc, opcode);
+        opcode
     }
 
     fn run_opcode(&mut self, opcode: u16) -> Pc {
@@ -534,9 +544,10 @@ impl Chip8 {
     }
 
     // LD ST, Vx: Set sound timer = Vx
-    fn op_fx18(&self, x: usize) -> Pc {
+    fn op_fx18(&mut self, x: usize) -> Pc {
         trace!("LD ST, V{:X}", x);
-        self.op_not_impl()
+        self.sound_timer = self.v[x];
+        Pc::Inc
     }
 
     // ADD I, Vx: Set I = I + Vx
