@@ -244,7 +244,7 @@ impl Chip8 {
     fn sound(&mut self) {
         if self.sound_timer > 0 {
             write!(stdout(), "{}", 0x07u8 as char).unwrap();
-            self.sound_timer -= 1;
+            self.sound_timer = 0;
         }
     }
 
