@@ -41,7 +41,7 @@ fn main() {
         }
         /* debug
         if keycode != 0xFD { // Not Enter key
-            self.delay_timer = 0;
+            chip8.delay_timer = 0;
             continue;
         }
         */
