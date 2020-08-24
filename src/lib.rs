@@ -1,6 +1,6 @@
 use std::env;
 use std::fs::File;
-use std::io::{Read, Write, stdout};
+use std::io::{Read};
 
 use log::{error, trace};
 use rand;
@@ -67,7 +67,7 @@ pub struct Chip8 {
     pc: usize,
 
     delay_timer: u8,
-    sound_timer: u8,
+    pub sound_timer: u8,
     pub keycode: u8,
     pub key_waiting: bool,
     pub key_register: usize,
@@ -122,13 +122,6 @@ impl Chip8 {
     fn dec_delay_timer(&mut self) {
         if self.delay_timer > 0 {
             self.delay_timer -= 1;
-        }
-    }
-
-    pub fn sound(&mut self) {
-        if self.sound_timer > 0 {
-            write!(stdout(), "{}", 0x07u8 as char).unwrap();
-            self.sound_timer = 0;
         }
     }
 

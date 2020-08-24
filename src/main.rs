@@ -53,7 +53,11 @@ fn main() {
             }
         }
 
-        chip8.sound();
+        if chip8.sound_timer > 0 {
+            io_driver.sound();
+            chip8.sound_timer = 0;
+        }
+
         chip8.run();
 
         if chip8.vram_changed {
@@ -132,6 +136,10 @@ impl IODriver {
             Key::Esc => 0xFE,
             _ => 0xFF,
         }
+    }
+
+    fn sound(&self) {
+        write!(stdout(), "{}", 0x07u8 as char).unwrap();
     }
 }
 
