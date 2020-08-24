@@ -32,26 +32,19 @@ fn main() {
 
         let keycode = io_driver.get_key(&mut stdin);
         match keycode {
-            0x0..=0xF => chip8.keycode = keycode,
+            0x00..=0x0F => chip8.set_key(keycode),
             0xFE => break, // Esc key
             _ => (),
-        };
+        }
+        if chip8.key_waiting {
+            continue;
+        }
         /* debug
         if keycode != 0xFD { // Not Enter key
             self.delay_timer = 0;
             continue;
         }
         */
-
-        if chip8.key_waiting {
-            if chip8.keycode == 0xFF {
-                continue;
-            } else {
-                chip8.v[chip8.key_register] = chip8.keycode;
-                chip8.key_waiting = false;
-                chip8.keycode = 0xFF;
-            }
-        }
 
         if chip8.sound_timer > 0 {
             io_driver.sound();

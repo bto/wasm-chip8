@@ -52,7 +52,7 @@ pub struct Chip8 {
     ram: [u8; MEMSIZE],
 
     // General purpose 8-bit registers
-    pub v: [u8; 16],
+    v: [u8; 16],
 
     // Index register
     i: usize,
@@ -66,11 +66,11 @@ pub struct Chip8 {
     // Program counter
     pc: usize,
 
-    delay_timer: u8,
+    pub delay_timer: u8,
     pub sound_timer: u8,
-    pub keycode: u8,
+    keycode: u8,
     pub key_waiting: bool,
-    pub key_register: usize,
+    key_register: usize,
     pub vram: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
     pub vram_changed: bool,
 }
@@ -109,6 +109,15 @@ impl Chip8 {
         let args: Vec<String> = env::args().collect();
         let mut f = File::open(args[1].as_str()).expect("File not found");
         f.read(&mut self.ram[START_ADDR..]).unwrap();
+    }
+
+    pub fn set_key(&mut self, keycode: u8) {
+        if self.key_waiting {
+            self.v[self.key_register] = keycode;
+            self.key_waiting = false;
+        } else {
+            self.keycode = keycode;
+        }
     }
 
     pub fn run(&mut self) {
