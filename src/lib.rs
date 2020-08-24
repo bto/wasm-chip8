@@ -1,15 +1,9 @@
 use std::env;
 use std::fs::File;
 use std::io::{Read, Write, stdout};
-use std::thread;
-use std::time::Duration;
 
 use log::{error, trace};
 use rand;
-use termion::{AsyncReader, async_stdin, color};
-use termion::event::Key;
-use termion::input::TermRead;
-use termion::raw::IntoRawMode;
 
 const FONT_SET: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -37,7 +31,7 @@ const START_ADDR: usize = 0x200;
 
 #[derive(Debug)]
 #[derive(PartialEq)]
-enum Pc {
+pub enum Pc {
     Inc,
     Skip,
     Jump(usize),
@@ -58,7 +52,7 @@ pub struct Chip8 {
     ram: [u8; MEMSIZE],
 
     // General purpose 8-bit registers
-    v: [u8; 16],
+    pub v: [u8; 16],
 
     // Index register
     i: usize,
@@ -74,11 +68,11 @@ pub struct Chip8 {
 
     delay_timer: u8,
     sound_timer: u8,
-    keycode: u8,
-    key_waiting: bool,
-    key_register: usize,
-    vram: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
-    vram_changed: bool,
+    pub keycode: u8,
+    pub key_waiting: bool,
+    pub key_register: usize,
+    pub vram: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
+    pub vram_changed: bool,
 }
 
 impl Chip8 {
@@ -118,113 +112,11 @@ impl Chip8 {
     }
 
     pub fn run(&mut self) {
-        self.display_clear();
-
-        let _stdout = stdout().into_raw_mode().unwrap();
-        let mut stdin = async_stdin();
-
-        loop {
-            thread::sleep(Duration::from_millis(1));
-
-            let keycode = self.get_key(&mut stdin);
-            match keycode {
-                0x0..=0xF => self.keycode = keycode,
-                0xFE => break, // Esc key
-                _ => (),
-            };
-            /* debug
-            if keycode != 0xFD { // Not Enter key
-                self.delay_timer = 0;
-                continue;
-            }
-            */
-
-            if self.key_waiting {
-                if self.keycode == 0xFF {
-                    continue;
-                } else {
-                    self.v[self.key_register] = self.keycode;
-                    self.key_waiting = false;
-                    self.keycode = 0xFF;
-                }
-            }
-
-            self.dec_delay_timer();
-            self.sound();
-
-            let opcode = self.fetch();
-            let pc = self.run_opcode(opcode);
-            self.set_pc(&pc);
-            self.trace_status();
-
-            if self.vram_changed {
-                self.display_draw();
-                self.vram_changed = false;
-            }
-        }
-
-        self.display_restore();
-    }
-
-    fn display_clear(&self) {
-        write!(stdout(), "{}{}", termion::clear::All, termion::cursor::Hide).unwrap();
-    }
-
-    fn display_draw(&self) {
-        let mut output = String::new();
-        for y in 0..DISPLAY_HEIGHT {
-            output += &termion::cursor::Goto(1, y as u16 + 1).to_string();
-            for x in 0..DISPLAY_WIDTH {
-                if self.vram[y][x] {
-                    output += &color::Bg(color::White).to_string();
-                } else {
-                    output += &color::Bg(color::Black).to_string();
-                }
-                output += " ";
-            }
-        }
-        write!(stdout(), "{}", output).unwrap();
-        stdout().flush().unwrap();
-    }
-
-    fn display_restore(&self) {
-        write!(
-            stdout(),
-            "{}{}{}",
-            termion::clear::All,
-            termion::cursor::Goto(1, 1),
-            termion::cursor::Show
-        ).unwrap();
-    }
-
-    fn get_key(&self, stdin: &mut AsyncReader) -> u8 {
-        let opt = stdin.keys().next();
-        let key = match opt {
-            Some(c) => c.unwrap(),
-            None => return 0xFF,
-        };
-
-        match key {
-            Key::Char('x') => 0x00,
-            Key::Char('1') => 0x01,
-            Key::Char('2') => 0x02,
-            Key::Char('3') => 0x03,
-            Key::Char('q') => 0x04,
-            Key::Char('w') => 0x05,
-            Key::Char('e') => 0x06,
-            Key::Char('a') => 0x07,
-            Key::Char('s') => 0x08,
-            Key::Char('d') => 0x09,
-            Key::Char('z') => 0x0A,
-            Key::Char('c') => 0x0B,
-            Key::Char('4') => 0x0C,
-            Key::Char('r') => 0x0D,
-            Key::Char('f') => 0x0E,
-            Key::Char('v') => 0x0F,
-            Key::Char('\n') => 0xFD,
-            Key::Esc => 0xFE,
-            _ => 0xFF,
-        }
+        self.dec_delay_timer();
+        let opcode = self.fetch();
+        let pc = self.run_opcode(opcode);
+        self.set_pc(&pc);
+        self.trace_status();
     }
 
     fn dec_delay_timer(&mut self) {
@@ -233,7 +125,7 @@ impl Chip8 {
         }
     }
 
-    fn sound(&mut self) {
+    pub fn sound(&mut self) {
         if self.sound_timer > 0 {
             write!(stdout(), "{}", 0x07u8 as char).unwrap();
             self.sound_timer = 0;

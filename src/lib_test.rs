@@ -1,4 +1,3 @@
-
 use super::*;
 
 #[test]
@@ -16,23 +15,6 @@ fn test_load_fontset() {
     assert_eq!(chip8.ram[0x00], 0xF0);
     assert_eq!(chip8.ram[0x4F], 0x80);
     assert_eq!(chip8.ram[0x50], 0x00);
-}
-
-#[test]
-#[ignore]
-fn test_display() {
-    let mut chip8 = Chip8::new();
-
-    chip8.display_clear();
-    for x in 0..3 {
-        for y in 0..3 {
-            chip8.vram[y][x] = true;
-        }
-    }
-    chip8.display_draw();
-
-    chip8.vram[1][1] = false;
-    chip8.display_draw();
 }
 
 #[test]
