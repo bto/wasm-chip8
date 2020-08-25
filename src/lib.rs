@@ -1,7 +1,3 @@
-use std::env;
-use std::fs::File;
-use std::io::{Read};
-
 use log::{error, trace};
 use rand;
 
@@ -49,7 +45,7 @@ impl Pc {
 
 pub struct Chip8 {
     // 4KB of RAM
-    ram: [u8; MEMSIZE],
+    pub ram: [u8; MEMSIZE],
 
     // General purpose 8-bit registers
     v: [u8; 16],
@@ -94,21 +90,10 @@ impl Chip8 {
         }
     }
 
-    pub fn load(&mut self) {
-        self.load_fontset();
-        self.load_rom();
-    }
-
-    fn load_fontset(&mut self) {
+    pub fn load_fontset(&mut self) {
         for i in 0..FONT_SET.len() {
             self.ram[i] = FONT_SET[i];
         }
-    }
-
-    fn load_rom(&mut self) {
-        let args: Vec<String> = env::args().collect();
-        let mut f = File::open(args[1].as_str()).expect("File not found");
-        f.read(&mut self.ram[START_ADDR..]).unwrap();
     }
 
     pub fn set_key(&mut self, keycode: u8) {

@@ -1,7 +1,9 @@
 mod lib;
 use lib::Chip8;
 
-use std::io::{Write, stdout};
+use std::env;
+use std::fs::File;
+use std::io::{Read, Write, stdout};
 use std::thread;
 use std::time::Duration;
 
@@ -13,24 +15,35 @@ use termion::raw::IntoRawMode;
 
 const DISPLAY_HEIGHT: usize = 32;
 const DISPLAY_WIDTH: usize = 64;
+const START_ADDR: usize = 0x200;
 
 fn main() {
     log4rs::init_file("logger.yml", Default::default()).unwrap();
 
     let mut chip8 = Chip8::new();
+    chip8.load_fontset();
+    load_rom(&mut chip8);
+
     let io_driver = IODriver::new();
-
-    chip8.load();
-
-    io_driver.display_clear();
-
     let _stdout = stdout().into_raw_mode().unwrap();
     let mut stdin = async_stdin();
 
+    io_driver.display_clear();
+    main_loop(&mut chip8, &io_driver, &mut stdin);
+    io_driver.display_restore();
+}
+
+fn load_rom(chip8: &mut Chip8) {
+    let args: Vec<String> = env::args().collect();
+    let mut f = File::open(args[1].as_str()).expect("File not found");
+    f.read(&mut chip8.ram[START_ADDR..]).unwrap();
+}
+
+fn main_loop(chip8: &mut Chip8, io_driver: &IODriver, stdin: &mut AsyncReader) {
     loop {
         thread::sleep(Duration::from_millis(1));
 
-        let keycode = io_driver.get_key(&mut stdin);
+        let keycode = io_driver.get_key(stdin);
         match keycode {
             0x00..=0x0F => chip8.set_key(keycode),
             0xFE => break, // Esc key
@@ -58,8 +71,6 @@ fn main() {
             chip8.vram_changed = false;
         }
     }
-
-    io_driver.display_restore();
 }
 
 struct IODriver {
