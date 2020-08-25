@@ -25,7 +25,7 @@ fn main() {
     load_rom(&mut chip8);
 
     let io_driver = IODriver::new();
-    let _stdout = stdout().into_raw_mode().unwrap();
+    // let _stdout = stdout().into_raw_mode().unwrap();
     let mut stdin = async_stdin();
 
     io_driver.display_clear();
@@ -67,7 +67,8 @@ fn main_loop(chip8: &mut Chip8, io_driver: &IODriver, stdin: &mut AsyncReader) {
         chip8.run();
 
         if chip8.vram_changed {
-            io_driver.display_draw(&chip8.vram);
+            // io_driver.display_draw(&chip8.vram);
+            println!("{}", chip8);
             chip8.vram_changed = false;
         }
     }

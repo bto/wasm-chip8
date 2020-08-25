@@ -1,5 +1,6 @@
 use log::{error, trace};
 use rand;
+use std::fmt;
 
 const FONT_SET: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -508,6 +509,22 @@ impl Chip8 {
         trace!("sp = {:04X}", self.sp);
         trace!("keycode = {:02X}", self.keycode);
         trace!("delay_timer = {}", self.delay_timer);
+    }
+}
+
+impl fmt::Display for Chip8 {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for y in 0..DISPLAY_HEIGHT {
+            for x in 0..DISPLAY_WIDTH {
+                if self.vram[y][x] {
+                    write!(f, "◻")?;
+                } else {
+                    write!(f, "◼")?;
+                }
+            }
+            write!(f, "\n")?
+        }
+        Ok(())
     }
 }
 
