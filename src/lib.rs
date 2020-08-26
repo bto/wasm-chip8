@@ -1,6 +1,7 @@
 use log::{error, trace};
 use rand;
 use std::fmt;
+use wasm_bindgen::prelude::*;
 
 const FONT_SET: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -95,6 +96,7 @@ impl Pc {
     }
 }
 
+#[wasm_bindgen]
 pub struct Chip8 {
     // 4KB of RAM
     pub ram: [u8; MEMSIZE],
@@ -123,6 +125,7 @@ pub struct Chip8 {
     pub vram_changed: bool,
 }
 
+#[wasm_bindgen]
 impl Chip8 {
     pub fn new() -> Self {
         let mut obj = Self {

@@ -1,3 +1,13 @@
-import * as wasm from "wasm-chip8";
+import { Chip8 } from "wasm-chip8";
 
-wasm.greet();
+const pre = document.getElementById("display");
+const chip8 = Chip8.new();
+
+const renderLoop = () => {
+    pre.textContent = chip8.to_string();
+    chip8.run();
+
+    requestAnimationFrame(renderLoop);
+};
+
+requestAnimationFrame(renderLoop);
