@@ -9,7 +9,5 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 log = "~0.4.11"
-#log4rs = "~0.13.0"
 rand = "~0.7.3"
-#termion = "~1.5.5"
 wasm-bindgen = "*"
