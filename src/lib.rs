@@ -99,7 +99,7 @@ impl Pc {
 #[wasm_bindgen]
 pub struct Chip8 {
     // 4KB of RAM
-    pub ram: [u8; MEMSIZE],
+    ram: [u8; MEMSIZE],
 
     // General purpose 8-bit registers
     v: [u8; 16],
@@ -121,7 +121,7 @@ pub struct Chip8 {
     keycode: u8,
     pub key_waiting: bool,
     key_register: usize,
-    pub vram: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
+    vram: [[bool; DISPLAY_WIDTH]; DISPLAY_HEIGHT],
     pub vram_changed: bool,
 }
 
@@ -149,18 +149,6 @@ impl Chip8 {
         obj
     }
 
-    pub fn load_fontset(&mut self) {
-        for i in 0..FONT_SET.len() {
-            self.ram[i] = FONT_SET[i];
-        }
-    }
-
-    fn load_rom(&mut self) {
-        for i in 0..ROM.len() {
-            self.ram[i + START_ADDR] = ROM[i];
-        }
-    }
-
     pub fn set_key(&mut self, keycode: u8) {
         if self.key_waiting {
             self.v[self.key_register] = keycode;
@@ -176,6 +164,22 @@ impl Chip8 {
         let pc = self.run_opcode(opcode);
         self.set_pc(&pc);
         self.trace_status();
+    }
+
+    pub fn render(&self) -> String {
+        self.to_string()
+    }
+
+    fn load_fontset(&mut self) {
+        for i in 0..FONT_SET.len() {
+            self.ram[i] = FONT_SET[i];
+        }
+    }
+
+    fn load_rom(&mut self) {
+        for i in 0..ROM.len() {
+            self.ram[i + START_ADDR] = ROM[i];
+        }
     }
 
     fn dec_delay_timer(&mut self) {
@@ -581,9 +585,9 @@ impl fmt::Display for Chip8 {
         for y in 0..DISPLAY_HEIGHT {
             for x in 0..DISPLAY_WIDTH {
                 if self.vram[y][x] {
-                    write!(f, "◻")?;
-                } else {
                     write!(f, "◼")?;
+                } else {
+                    write!(f, "◻")?;
                 }
             }
             write!(f, "\n")?

@@ -4,7 +4,7 @@ const pre = document.getElementById("display");
 const chip8 = Chip8.new();
 
 const renderLoop = () => {
-    pre.textContent = chip8.to_string();
+    pre.textContent = chip8.render();
     chip8.run();
 
     requestAnimationFrame(renderLoop);

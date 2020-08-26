@@ -11,3 +11,6 @@ crate-type = ["cdylib", "rlib"]
 log = "~0.4.11"
 rand = "~0.7.3"
 wasm-bindgen = "*"
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
