@@ -58,8 +58,15 @@ document.body.addEventListener("keydown", event => {
 });
 
 const renderLoop = () => {
-    pre.textContent = chip8.render();
+    if (chip8.key_waiting) {
+        requestAnimationFrame(renderLoop);
+    }
+
     chip8.run();
+
+    if (chip8.vram_changed) {
+        pre.textContent = chip8.render();
+    }
 
     requestAnimationFrame(renderLoop);
 };
