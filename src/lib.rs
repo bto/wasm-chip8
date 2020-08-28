@@ -101,6 +101,18 @@ impl Chip8 {
         obj
     }
 
+    pub fn get_register(&self, name: &str) -> u16 {
+        if name == "i" {
+            self.i as u16
+        } else if name == "sp" {
+            self.sp as u16
+        } else if name == "pc" {
+            self.pc as u16
+        } else {
+            0
+        }
+    }
+
     pub fn set_key(&mut self, keycode: u8) {
         if self.key_waiting {
             self.v[self.key_register] = keycode;

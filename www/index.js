@@ -1,6 +1,9 @@
 import { Chip8 } from "wasm-chip8";
 
-const pre = document.getElementById("display");
+const displayElement = document.getElementById("display");
+const indexRegisterElement = document.getElementById("index-register");
+const stackPointerElement = document.getElementById("stack-pointer");
+const programCounterElement = document.getElementById("program-counter");
 const chip8 = Chip8.new();
 
 document.body.addEventListener("keydown", event => {
@@ -64,8 +67,12 @@ const renderLoop = () => {
 
     chip8.run();
 
+    indexRegisterElement.textContent = chip8.get_register("i");
+    stackPointerElement.textContent = chip8.get_register("sp");
+    programCounterElement.textContent = chip8.get_register("pc");
+
     if (chip8.vram_changed) {
-        pre.textContent = chip8.render();
+        displayElement.textContent = chip8.render();
     }
 
     requestAnimationFrame(renderLoop);
