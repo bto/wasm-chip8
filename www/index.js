@@ -1,9 +1,6 @@
 import { Chip8 } from "wasm-chip8";
 
 const displayElement = document.getElementById("display");
-const indexRegisterElement = document.getElementById("index-register");
-const stackPointerElement = document.getElementById("stack-pointer");
-const programCounterElement = document.getElementById("program-counter");
 const chip8 = Chip8.new();
 
 document.body.addEventListener("keydown", event => {
@@ -57,7 +54,6 @@ document.body.addEventListener("keydown", event => {
             chip8.set_key(0x0F);
             break;
     }
-    alert(event.key);
 });
 
 const renderLoop = () => {
@@ -67,9 +63,25 @@ const renderLoop = () => {
 
     chip8.run();
 
-    indexRegisterElement.textContent = chip8.get_register("i");
-    stackPointerElement.textContent = chip8.get_register("sp");
-    programCounterElement.textContent = chip8.get_register("pc");
+    document.getElementById("v0").textContent = chip8.get_state("v", 0x0);
+    document.getElementById("v1").textContent = chip8.get_state("v", 0x1);
+    document.getElementById("v2").textContent = chip8.get_state("v", 0x2);
+    document.getElementById("v3").textContent = chip8.get_state("v", 0x3);
+    document.getElementById("v4").textContent = chip8.get_state("v", 0x4);
+    document.getElementById("v5").textContent = chip8.get_state("v", 0x5);
+    document.getElementById("v6").textContent = chip8.get_state("v", 0x6);
+    document.getElementById("v7").textContent = chip8.get_state("v", 0x7);
+    document.getElementById("v8").textContent = chip8.get_state("v", 0x8);
+    document.getElementById("v9").textContent = chip8.get_state("v", 0x9);
+    document.getElementById("va").textContent = chip8.get_state("v", 0xA);
+    document.getElementById("vb").textContent = chip8.get_state("v", 0xB);
+    document.getElementById("vc").textContent = chip8.get_state("v", 0xC);
+    document.getElementById("vd").textContent = chip8.get_state("v", 0xD);
+    document.getElementById("ve").textContent = chip8.get_state("v", 0xE);
+    document.getElementById("vf").textContent = chip8.get_state("v", 0xF);
+    document.getElementById("index-register").textContent = chip8.get_state("i");
+    document.getElementById("stack-pointer").textContent = chip8.get_state("sp");
+    document.getElementById("program-counter").textContent = chip8.get_state("pc");
 
     if (chip8.vram_changed) {
         displayElement.textContent = chip8.render();

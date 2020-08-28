@@ -101,13 +101,23 @@ impl Chip8 {
         obj
     }
 
-    pub fn get_register(&self, name: &str) -> u16 {
-        if name == "i" {
+    pub fn get_state(&self, name: &str, idx: usize) -> u16 {
+        if name == "v" {
+            self.v[idx] as u16
+        } else if name == "i" {
             self.i as u16
+        } else if name == "stack" {
+            self.stack[idx] as u16
         } else if name == "sp" {
             self.sp as u16
         } else if name == "pc" {
             self.pc as u16
+        } else if name == "delay_timer" {
+            self.delay_timer as u16
+        } else if name == "sound_timer" {
+            self.sound_timer as u16
+        } else if name == "keycode" {
+            self.keycode as u16
         } else {
             0
         }

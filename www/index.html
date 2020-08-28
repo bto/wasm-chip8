@@ -3,25 +3,70 @@
   <head>
     <meta charset="utf-8">
     <title>Chip8</title>
-    <style>
-      body {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-    </style>
+    <link rel="stylesheet" href="./index.css">
   </head>
   <body>
-    <pre id="display"></pre><br />
-    <pre>i: </pre><pre id="index-register"></pre><br />
-    <pre>sp: </pre><pre id="stack-pointer"></pre><br />
-    <pre>pc: </pre><pre id="program-counter"></pre><br />
+    <pre id="display"></pre>
+      <div id="state">
+      <div class="register">
+        <div>v0: </div><div id="v0"></div>
+      </div>
+      <div class="register">
+        <div>v1: </div><div id="v1"></div>
+      </div>
+      <div class="register">
+        <div>v2: </div><div id="v2"></div> 
+      </div>
+      <div class="register">
+        <div>v3: </div><div id="v3"></div>
+      </div>
+      <div class="register">
+        <div>v4: </div><div id="v4"></div>
+      </div>
+      <div class="register">
+        <div>v5: </div><div id="v5"></div>
+      </div>
+      <div class="register">
+        <div>v6: </div><div id="v6"></div>
+      </div>
+      <div class="register">
+        <div>v7: </div><div id="v7"></div>
+      </div>
+      <div class="register">
+        <div>v8: </div><div id="v8"></div>
+      </div>
+      <div class="register">
+        <div>v9: </div><div id="v9"></div>
+      </div>
+      <div class="register">
+        <div>va: </div><div id="va"></div>
+      </div>
+      <div class="register">
+        <div>vb: </div><div id="vb"></div>
+      </div>
+      <div class="register">
+        <div>vc: </div><div id="vc"></div>
+      </div>
+      <div class="register">
+        <div>vd: </div><div id="vd"></div>
+      </div>
+      <div class="register">
+        <div>ve: </div><div id="ve"></div>
+      </div>
+      <div class="register">
+        <div>vf: </div><div id="vf"></div>
+      </div>
+      <div class="register">
+        <div>i: </div> <div id="index-register"></div>
+      </div>
+      <div class="register">
+        <div>sp: </div> <div id="stack-pointer"></div>
+      </div>
+      <div class="register">
+        <div>pc: </div> <div id="program-counter"></div>
+      </div>
+    </div>
+
     <script src="./bootstrap.js"></script>
   </body>
 </html>
