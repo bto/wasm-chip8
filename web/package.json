@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/bto/wasm-chip8#readme",
   "dependencies": {
-    "wasm-chip8": "file:../pkg"
+    "wasm-chip8": "file:../wasm/pkg"
   },
   "devDependencies": {
     "webpack": "~4.29",
