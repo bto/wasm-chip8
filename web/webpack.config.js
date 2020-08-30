@@ -1,4 +1,4 @@
-const CopyWebpackPlugin = require("copy-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -6,10 +6,10 @@ module.exports = {
     app: './src/main.js',
   },
   output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "bootstrap.js",
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bootstrap.js',
   },
-  mode: "development",
+  mode: 'development',
   plugins: [
     new CopyWebpackPlugin(['index.html'])
   ],
