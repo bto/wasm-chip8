@@ -1,3 +1,4 @@
+'use strict'
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
@@ -11,6 +12,8 @@ module.exports = {
   },
   mode: 'development',
   plugins: [
-    new CopyWebpackPlugin(['index.html'])
+    new CopyWebpackPlugin({
+      patterns: ['index.html'],
+    }),
   ],
 };
