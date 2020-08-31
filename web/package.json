@@ -30,6 +30,7 @@
     "copy-webpack-plugin": "~6.0",
     "webpack": "~4.44",
     "webpack-cli": "~3.3",
-    "webpack-dev-server": "~3.11"
+    "webpack-dev-server": "~3.11",
+    "write-file-webpack-plugin": "~4.5"
   }
 }
