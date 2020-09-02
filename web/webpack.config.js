@@ -1,23 +1,25 @@
 'use strict'
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const WriteFilePlugin = require('write-file-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = {
-  mode: process.env.NODE_ENV || "development",
-  entry: {
-    app: './src/main.js',
+  devServer: {
+    contentBase: path.resolve(__dirname, 'dist'),
   },
+  devtool: 'inline-source-map',
+  entry: path.resolve(__dirname, 'src/bootstrap.js'),
+  mode: process.env.NODE_ENV || "development",
   output: {
+    filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bootstrap.js',
   },
   plugins: [
-    new CopyWebpackPlugin({
-      patterns: [{
-        from: 'static',
-      }],
+    new CleanWebpackPlugin({
+      cleanStaleWebpackAssets: false,
     }),
-    new WriteFilePlugin(),
+    new HtmlWebpackPlugin({
+      title: 'WASM CHIP-8 written in Rust',
+    }),
   ],
 };

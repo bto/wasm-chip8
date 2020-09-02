@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server --host 0.0.0.0"
+    "start": "webpack-dev-server --open --host 0.0.0.0",
+    "watch": "webpack --watch"
   },
   "repository": {
     "type": "git",
@@ -27,10 +28,10 @@
     "wasm-chip8": "file:../wasm/pkg"
   },
   "devDependencies": {
-    "copy-webpack-plugin": "~6.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^4.4.1",
     "webpack": "~4.44",
     "webpack-cli": "~3.3",
-    "webpack-dev-server": "~3.11",
-    "write-file-webpack-plugin": "~4.5"
+    "webpack-dev-server": "~3.11"
   }
 }
