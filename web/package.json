@@ -34,5 +34,11 @@
     "webpack": "~4.44",
     "webpack-cli": "~3.3",
     "webpack-dev-server": "~3.11"
+  },
+  "dependencies": {
+    "@types/react": "~16.9",
+    "@types/react-dom": "~16.9",
+    "react": "~16.13",
+    "react-dom": "~16.13"
   }
 }
