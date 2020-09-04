@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "module": "umd",
+    "noImplicitAny": true,
+    "target": "es6"
+  }
+}
