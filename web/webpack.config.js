@@ -29,10 +29,4 @@ module.exports = {
       title: 'WASM CHIP-8 written in Rust',
     }),
   ],
-  resolve: {
-    extensions: [
-      '.js',
-      '.ts',
-    ],
-  },
 };
