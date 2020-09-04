@@ -9,7 +9,7 @@ module.exports = {
     contentBase: path.resolve(__dirname, 'dist'),
   },
   devtool: 'inline-source-map',
-  entry: path.resolve(__dirname, 'src/main.ts'),
+  entry: path.resolve(__dirname, 'src/main.tsx'),
   mode: process.env.NODE_ENV || "development",
   module: {
     rules: [{
@@ -27,6 +27,7 @@ module.exports = {
       cleanStaleWebpackAssets: false,
     }),
     new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'src/index.ejs'),
       title: 'WASM CHIP-8 written in Rust',
     }),
     new TSLintPlugin({
