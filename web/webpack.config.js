@@ -33,4 +33,13 @@ module.exports = {
       files: ['./src/**/*.ts']
     }),
   ],
+  resolve: {
+    extensions: [
+      '.js',
+      '.json',
+      '.ts',
+      '.tsx',
+      '.wasm',
+    ],
+  },
 };
