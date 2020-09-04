@@ -8,7 +8,7 @@ module.exports = {
     contentBase: path.resolve(__dirname, 'dist'),
   },
   devtool: 'inline-source-map',
-  entry: path.resolve(__dirname, 'src/bootstrap.ts'),
+  entry: path.resolve(__dirname, 'src/main.ts'),
   mode: process.env.NODE_ENV || "development",
   module: {
     rules: [{
