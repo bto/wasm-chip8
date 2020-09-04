@@ -6,6 +6,18 @@ use rand;
 use std::fmt;
 use wasm_bindgen::prelude::*;
 
+
+#[wasm_bindgen]
+extern {
+        pub fn alert(s: &str);
+}
+
+#[wasm_bindgen]
+pub fn greet(name: &str) {
+        alert(&format!("Hello, {}!", name));
+}
+
+
 const FONT_SET: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     0x20, 0x60, 0x20, 0x20, 0x70, // 1
