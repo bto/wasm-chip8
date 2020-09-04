@@ -24,9 +24,6 @@
     "url": "https://github.com/bto/wasm-chip8/issues"
   },
   "homepage": "https://github.com/bto/wasm-chip8#readme",
-  "dependencies": {
-    "wasm-chip8": "file:../wasm/pkg"
-  },
   "devDependencies": {
     "clean-webpack-plugin": "^3.0.0",
     "html-webpack-plugin": "^4.4.1",
