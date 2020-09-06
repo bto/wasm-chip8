@@ -1,12 +1,19 @@
 {
   "compilerOptions": {
+    "inlineSourceMap": true,
     "jsx": "react",
     "module": "esnext",
+    "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "outDir":"./dist",
     "target": "es6"
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ]
 }
