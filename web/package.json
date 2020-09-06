@@ -20,6 +20,7 @@
   ],
   "scripts": {
     "build": "webpack",
+    "lint": "eslint .",
     "start": "webpack-dev-server --open --host 0.0.0.0",
     "watch": "webpack --watch"
   },
