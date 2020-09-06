@@ -1,5 +1,6 @@
 'use strict'
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ESLintWebpackPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
@@ -25,6 +26,7 @@ module.exports = {
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
     }),
+    new ESLintWebpackPlugin({}),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.ejs'),
       title: 'WASM CHIP-8 written in Rust',
