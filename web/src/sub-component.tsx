@@ -17,7 +17,7 @@ export class SubComponent extends React.Component<IProps, IState> {
         };
     }
 
-    handleClick(): undefined {
+    handleClick(): void {
         console.log("クリックされました");
 
         this.setState({
