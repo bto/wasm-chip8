@@ -19,6 +19,7 @@ module.exports = {
     extends: [
       'eslint:recommended',
       'plugin:@typescript-eslint/recommended',
+      'plugin:react/recommended',
       'plugin:prettier/recommended',
       'prettier/@typescript-eslint',
     ],
@@ -29,6 +30,7 @@ module.exports = {
     },
     plugins: [
       '@typescript-eslint',
+      'react',
     ],
   }],
 };
