@@ -7,6 +7,8 @@ const path = require("path");
 module.exports = {
   devServer: {
     contentBase: path.resolve(__dirname, "dist"),
+    host: "0.0.0.0",
+    open: true,
   },
   devtool: "inline-source-map",
   entry: path.resolve(__dirname, "src/main.tsx"),
