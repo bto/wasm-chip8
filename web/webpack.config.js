@@ -1,7 +1,6 @@
 'use strict'
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const TSLintPlugin = require('tslint-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -29,9 +28,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.ejs'),
       title: 'WASM CHIP-8 written in Rust',
-    }),
-    new TSLintPlugin({
-      files: ['./src/**/*.ts']
     }),
   ],
   resolve: {
