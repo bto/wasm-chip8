@@ -11,7 +11,7 @@ module.exports = {
     open: true,
   },
   devtool: "inline-source-map",
-  entry: path.resolve(__dirname, "src/main.tsx"),
+  entry: path.resolve(__dirname, "src/index.tsx"),
   mode: process.env.NODE_ENV || "development",
   module: {
     rules: [
