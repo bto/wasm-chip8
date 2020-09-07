@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Chip8 } from "./wasm/chip8";
+import Display from "./Display";
 
 interface State {
     displayContext: string;
@@ -39,7 +40,7 @@ export default class App extends React.Component<unknown, State> {
         return (
             <div>
                 <h1>CHIP-8 emulator</h1>
-                <pre>{this.state.displayContext}</pre>
+                <Display displayContext={this.state.displayContext} />
             </div>
         );
     }
