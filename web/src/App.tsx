@@ -1,16 +1,11 @@
 import * as React from "react";
 import { Chip8 } from "./wasm/chip8";
-import Display from "./Display";
-import Status from "./Status";
+import * as Display from "./Display";
+import * as Status from "./Status";
 
 interface State {
-    displayContext: string;
-    status: {
-        v: number[];
-        i: number;
-        sp: number;
-        pc: number;
-    };
+    display: Display.Value;
+    status: Status.Value;
 }
 
 export default class App extends React.Component<unknown, State> {
@@ -18,8 +13,11 @@ export default class App extends React.Component<unknown, State> {
 
     constructor(props: unknown) {
         super(props);
+
         this.state = {
-            displayContext: "",
+            display: {
+                content: "",
+            },
             status: {
                 v: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 i: 0,
@@ -41,7 +39,9 @@ export default class App extends React.Component<unknown, State> {
 
         if (chip8.vram_changed) {
             this.setState({
-                displayContext: chip8.render(),
+                display: {
+                    content: chip8.render(),
+                },
             });
         }
 
@@ -75,11 +75,13 @@ export default class App extends React.Component<unknown, State> {
     };
 
     render(): React.ReactNode {
+        const state = this.state;
+
         return (
             <div>
                 <h1>CHIP-8 emulator</h1>
-                <Display displayContext={this.state.displayContext} />
-                <Status status={this.state.status} />
+                <Display.Component value={state.display} />
+                <Status.Component value={state.status} />
             </div>
         );
     }

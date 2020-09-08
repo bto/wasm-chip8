@@ -1,11 +1,15 @@
 import * as React from "react";
 
-interface Props {
-    displayContext: string;
+export interface Value {
+    content: string;
 }
 
-export default class Display extends React.Component<Props> {
+interface Props {
+    value: Value;
+}
+
+export class Component extends React.Component<Props> {
     render(): React.ReactNode {
-        return <pre>{this.props.displayContext}</pre>;
+        return <pre>{this.props.value.content}</pre>;
     }
 }

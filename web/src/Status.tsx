@@ -1,21 +1,25 @@
 import * as React from "react";
 
-interface Props {
-    status: {
-        v: number[];
-        i: number;
-        sp: number;
-        pc: number;
-    };
+export interface Value {
+    v: number[];
+    i: number;
+    sp: number;
+    pc: number;
 }
 
-export default class Status extends React.Component<Props> {
+interface Props {
+    value: Value;
+}
+
+export class Component extends React.Component<Props> {
     render(): React.ReactNode {
+        const value = this.props.value;
+
         return (
             <div>
-                <div>{this.props.status.i}</div>
-                <div>{this.props.status.sp}</div>
-                <div>{this.props.status.pc}</div>
+                <div>{value.i}</div>
+                <div>{value.sp}</div>
+                <div>{value.pc}</div>
             </div>
         );
     }
