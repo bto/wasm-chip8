@@ -10,6 +10,8 @@ interface Props {
 
 export class Component extends React.Component<Props> {
     render(): React.ReactNode {
-        return <pre>{this.props.value.content}</pre>;
+        const value = this.props.value;
+
+        return <pre>{value.content}</pre>;
     }
 }
