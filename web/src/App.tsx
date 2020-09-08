@@ -65,9 +65,9 @@ export default class App extends React.Component<unknown, State> {
                     chip8.get_state("v", 0xe),
                     chip8.get_state("v", 0xf),
                 ],
-                i: chip8.get_state("i", null),
-                sp: chip8.get_state("sp", null),
-                pc: chip8.get_state("pc", null),
+                i: chip8.i,
+                sp: chip8.sp,
+                pc: chip8.pc,
             },
         });
 
