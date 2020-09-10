@@ -1,17 +1,14 @@
 import * as React from "react";
 
-export interface Value {
-    content: string;
-}
+type Props = {
+    value: {
+        content: string;
+    };
+};
 
-interface Props {
-    value: Value;
-}
+const Component = (props: Props): JSX.Element => {
+    const value = props.value;
+    return <pre>{value.content}</pre>;
+};
 
-export class Component extends React.Component<Props> {
-    render(): React.ReactNode {
-        const value = this.props.value;
-
-        return <pre>{value.content}</pre>;
-    }
-}
+export default Component;

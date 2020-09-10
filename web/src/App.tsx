@@ -1,12 +1,19 @@
 import * as React from "react";
 import { Chip8 } from "./wasm/chip8";
-import * as Display from "./Display";
-import * as Status from "./Status";
+import Display from "./Display";
+import Status from "./Status";
 
-interface State {
-    display: Display.Value;
-    status: Status.Value;
-}
+type State = {
+    display: {
+        content: string;
+    };
+    status: {
+        v: number[];
+        i: number;
+        sp: number;
+        pc: number;
+    };
+};
 
 export default class App extends React.Component<unknown, State> {
     chip8: Chip8;
@@ -80,8 +87,8 @@ export default class App extends React.Component<unknown, State> {
         return (
             <div>
                 <h1>CHIP-8 emulator</h1>
-                <Display.Component value={state.display} />
-                <Status.Component value={state.status} />
+                <Display value={state.display} />
+                <Status value={state.status} />
             </div>
         );
     }
