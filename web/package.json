@@ -48,7 +48,10 @@
   "dependencies": {
     "@types/react": "<16.14",
     "@types/react-dom": "<16.14",
+    "@types/react-redux": "<7.3",
     "react": "<16.14",
-    "react-dom": "<16.14"
+    "react-dom": "<16.14",
+    "react-redux": "<7.3",
+    "redux": "<4.1"
   }
 }
