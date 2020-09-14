@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { Chip8 } from "./wasm/chip8";
 import Display from "./Display";
 import Status from "./Status";
@@ -33,10 +34,8 @@ export default class App extends React.Component<unknown, State> {
             },
         };
 
-        import("./wasm/chip8").then((mod) => {
-            this.chip8 = mod.Chip8.new();
-            requestAnimationFrame(this.renderLoop);
-        });
+        this.chip8 = Chip8.new();
+        requestAnimationFrame(this.renderLoop);
     }
 
     renderLoop = (): void => {
@@ -93,3 +92,5 @@ export default class App extends React.Component<unknown, State> {
         );
     }
 }
+
+ReactDOM.render(<App />, document.getElementById("app"));
