@@ -9,7 +9,7 @@ export const initState: State = {
     text: "",
 };
 
-export const reducer: Redux.Reducer<State> = (
+export const reducer: Redux.Reducer<State, AppActionTest> = (
     state = initState,
     action: AppActionTest
 ): State => {
