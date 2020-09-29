@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactRedux from "react-redux";
-import store from "../redux/store";
+import store from "../store";
 
 const App: React.FC = () => (
     <ReactRedux.Provider store={store}>
