@@ -6,7 +6,7 @@ const reducer = Redux.combineReducers({
     message: messageReducer,
 });
 
-type State = ReturnType<typeof reducer>;
+export type State = ReturnType<typeof reducer>;
 
 type Action = messageAction;
 
