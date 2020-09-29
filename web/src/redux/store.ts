@@ -1,11 +1,8 @@
 import * as Redux from "redux";
-import { AppAction } from "./action";
-import { State, reducer } from "./reducer";
+import AppAction from "./action";
+import AppReducer from "./reducer";
+import AppState from "./state";
 
-export type AppState = {
-    state: State;
-};
-
-const store: Redux.Store<AppState, AppAction> = Redux.createStore(reducer);
+const store: Redux.Store<AppState, AppAction> = Redux.createStore(AppReducer);
 
 export default store;

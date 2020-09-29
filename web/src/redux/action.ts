@@ -12,3 +12,5 @@ export interface AppActionTest extends Redux.Action {
 }
 
 export type AppAction = AppActionTest;
+
+export default AppAction;
