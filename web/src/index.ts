@@ -1,2 +1,2 @@
 import "./index.scss";
-import("./components/App");
+import("./components");
