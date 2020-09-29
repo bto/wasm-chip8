@@ -1,8 +1,5 @@
 import * as Redux from "redux";
-
-export enum AppActionType {
-    TEST_TEXT = "TEST_TEXT",
-}
+import AppActionType from "./actionType";
 
 export interface AppActionTest extends Redux.Action {
     type: AppActionType.TEST_TEXT;

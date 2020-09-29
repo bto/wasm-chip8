@@ -1,5 +1,6 @@
 import * as Redux from "redux";
-import { AppActionTest, AppActionType } from "./action";
+import AppAction from "./action";
+import AppActionType from "./actionType";
 
 export type State = {
     text: string;
@@ -9,9 +10,9 @@ export const initState: State = {
     text: "",
 };
 
-export const reducer: Redux.Reducer<State, AppActionTest> = (
+export const reducer: Redux.Reducer<State, AppAction> = (
     state = initState,
-    action: AppActionTest
+    action: AppAction
 ): State => {
     switch (action.type) {
         case AppActionType.TEST_TEXT:
