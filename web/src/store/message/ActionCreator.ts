@@ -1,5 +1,5 @@
-import * as Action from "./action";
-import ActionType from "./actionType";
+import * as Action from "./Action";
+import ActionType from "./ActionType";
 
 export const send = (message: string): Action.SendAction => ({
     type: ActionType.SEND,

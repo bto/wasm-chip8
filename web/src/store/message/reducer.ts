@@ -1,7 +1,7 @@
 import * as Redux from "redux";
-import Action from "./action";
-import ActionType from "./actionType";
-import State from "./state";
+import Action from "./Action";
+import ActionType from "./ActionType";
+import State from "./State";
 
 const initState: State = {
     message: "",
