@@ -1,6 +1,5 @@
 import * as Redux from "redux";
-import messageReducer from "./message/reducer";
-import messageAction from "./message/Action";
+import messageReducer from "./message/reducers";
 
 const reducer = Redux.combineReducers({
     message: messageReducer,
@@ -8,8 +7,6 @@ const reducer = Redux.combineReducers({
 
 export type State = ReturnType<typeof reducer>;
 
-export type Action = messageAction;
-
-const store: Redux.Store<State, Action> = Redux.createStore(reducer);
+const store: Redux.Store<State> = Redux.createStore(reducer);
 
 export default store;
