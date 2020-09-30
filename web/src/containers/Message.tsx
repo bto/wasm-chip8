@@ -28,14 +28,10 @@ const connector = ReactRedux.connect<MapState, MapDispatch>(
     mapDispatch
 );
 
-type Props = ReactRedux.ConnectedProps<typeof connector>;
+export type Props = ReactRedux.ConnectedProps<typeof connector>;
 
-const component: React.FC<Props> = (props: Props) => {
-    return (
-        <div>
-            <Message message={props.message} />
-        </div>
-    );
-};
+const component: React.FC<Props> = (props: Props) => (
+    <Message message={props.message} send={props.send} />
+);
 
 export default connector(component);
