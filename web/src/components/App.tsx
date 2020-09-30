@@ -1,5 +1,5 @@
 import * as React from "react";
-import Message from "../containers/Message";
+import Message from "./Message";
 
 const component: React.FC = () => (
     <div>
