@@ -52,6 +52,8 @@
     "react": "<16.14",
     "react-dom": "<16.14",
     "react-redux": "<7.3",
-    "redux": "<4.1"
+    "redux": "<4.1",
+    "typescript-fsa": "<3.1",
+    "typescript-fsa-reducers": "<1.3"
   }
 }
