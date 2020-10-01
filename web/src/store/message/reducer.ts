@@ -1,6 +1,9 @@
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import actions from "./actions";
-import State from "./state";
+
+export type State = {
+    message: string;
+};
 
 const initState: State = {
     message: "",

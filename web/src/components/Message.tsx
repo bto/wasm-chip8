@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactRedux from "react-redux";
-import State from "../store/state";
 import actions from "../store/actions";
+import { State } from "../store/reducer";
 
 const component: React.FC = () => {
     const [message, setMessage] = React.useState("");
