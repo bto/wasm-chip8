@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactRedux from "react-redux";
-import { State } from "../store";
-import actions from "../store/message/actions";
+import State from "../store/state";
+import actions from "../store/actions";
 
 const component: React.FC = () => {
     const [message, setMessage] = React.useState("");
@@ -15,7 +15,7 @@ const component: React.FC = () => {
     };
 
     const onClick = (): void => {
-        dispatch(actions.send(message));
+        dispatch(actions.message.send(message));
     };
 
     return (
