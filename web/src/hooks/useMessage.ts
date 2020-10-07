@@ -2,10 +2,10 @@ import * as React from "react";
 import * as ReactRedux from "react-redux";
 import { actions, State } from "../store";
 
-interface Message {
+export type Message = {
     change: (event: React.ChangeEvent<HTMLInputElement>) => void;
     send: () => void;
-}
+};
 
 export const useMessage = (): [string, Message] => {
     const [message, setMessage] = React.useState<string>("");

@@ -1,16 +1,17 @@
 import * as React from "react";
-import useMessage from "../hooks/useMessage";
+import { Message } from "../hooks/useMessage";
 
-const component: React.FC = () => {
-    const [message, Message] = useMessage();
-
-    return (
-        <div>
-            Message {message}
-            <input type="text" onChange={Message.change} />
-            <button onClick={Message.send} />
-        </div>
-    );
+type Props = {
+    content: string;
+    message: Message;
 };
+
+const component: React.FC<Props> = (props: Props) => (
+    <div>
+        Message {props.content}
+        <input type="text" onChange={props.message.change} />
+        <button onClick={props.message.send} />
+    </div>
+);
 
 export default component;
