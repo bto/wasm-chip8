@@ -1,2 +1,3 @@
 import "./index.scss";
-import("./components");
+import "./components";
+import("./chip8");
