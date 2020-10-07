@@ -2,11 +2,12 @@ import * as React from "react";
 import * as ReactRedux from "react-redux";
 import { actions, State } from "../store";
 
-export const useMessage = (): [
-    string,
-    (event: React.ChangeEvent<HTMLInputElement>) => void,
-    () => void
-] => {
+interface Message {
+    change: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    send: () => void;
+}
+
+export const useMessage = (): [string, Message] => {
     const [message, setMessage] = React.useState<string>("");
     const currentMessage = ReactRedux.useSelector(
         (state: State) => state.message.message
@@ -21,7 +22,7 @@ export const useMessage = (): [
         dispatch(actions.message.send(message));
     };
 
-    return [currentMessage, change, send];
+    return [currentMessage, { change, send }];
 };
 
 export default useMessage;
