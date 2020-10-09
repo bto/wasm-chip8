@@ -1,10 +1,10 @@
 import * as React from "react";
-import Message from "../containers/Message";
+import Display from "../containers/Display";
 
 const component: React.FC = () => (
     <div>
-        App
-        <Message />
+        <h1>CHIP-8 emulator</h1>
+        <Display />
     </div>
 );
 
