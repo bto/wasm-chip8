@@ -6,7 +6,14 @@ import { State } from "../store";
 const container: React.FC = () => {
     const register = ReactRedux.useSelector((state: State) => state.register);
 
-    return <Component i={register.i} pc={register.pc} sp={register.sp} />;
+    return (
+        <Component
+            i={register.i}
+            pc={register.pc}
+            sp={register.sp}
+            v={register.v}
+        />
+    );
 };
 
 export default container;

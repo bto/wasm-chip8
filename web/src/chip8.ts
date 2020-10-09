@@ -15,6 +15,26 @@ const emuLoop = (): void => {
     dispatch(actions.register.setI(chip8.i));
     dispatch(actions.register.setPC(chip8.pc));
     dispatch(actions.register.setSP(chip8.sp));
+    dispatch(
+        actions.register.setV([
+            chip8.get_state("v", 0x0),
+            chip8.get_state("v", 0x1),
+            chip8.get_state("v", 0x2),
+            chip8.get_state("v", 0x3),
+            chip8.get_state("v", 0x4),
+            chip8.get_state("v", 0x5),
+            chip8.get_state("v", 0x6),
+            chip8.get_state("v", 0x7),
+            chip8.get_state("v", 0x8),
+            chip8.get_state("v", 0x9),
+            chip8.get_state("v", 0xa),
+            chip8.get_state("v", 0xb),
+            chip8.get_state("v", 0xc),
+            chip8.get_state("v", 0xd),
+            chip8.get_state("v", 0xe),
+            chip8.get_state("v", 0xf),
+        ])
+    );
 
     requestAnimationFrame(emuLoop);
 };
