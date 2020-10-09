@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactRedux from "react-redux";
 import Component from "../components/Display";
-import { State } from "../redux";
+import { State } from "../store";
 
 const container: React.FC = () => {
     const display = ReactRedux.useSelector(
