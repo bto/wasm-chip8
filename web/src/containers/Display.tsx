@@ -7,7 +7,7 @@ const container: React.FC = () => {
     const display = ReactRedux.useSelector(
         (state: State) => state.vram.display
     );
-    
+
     return <Component display={display} />;
 };
 
