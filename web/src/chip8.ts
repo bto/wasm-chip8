@@ -20,6 +20,11 @@ const emuLoop = (): void => {
     const v = Array.from(new Uint8Array(memory.buffer, chip8.ptr_v(), 16));
     dispatch(actions.register.setV(v));
 
+    const ram = Array.from(
+        new Uint8Array(memory.buffer, chip8.ptr_ram(), 0xfff)
+    );
+    dispatch(actions.ram.set(ram));
+
     requestAnimationFrame(emuLoop);
 };
 
