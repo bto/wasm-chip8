@@ -113,8 +113,20 @@ impl Chip8 {
         obj
     }
 
+    pub fn ptr_ram(&self) -> *const u8 {
+        self.ram.as_ptr()
+    }
+
+    pub fn ptr_stack(&self) -> *const usize {
+        self.stack.as_ptr()
+    }
+
     pub fn ptr_v(&self) -> *const u8 {
         self.v.as_ptr()
+    }
+
+    pub fn ptr_vram(&self) -> *const bool {
+        self.vram[0].as_ptr()
     }
 
     pub fn set_key(&mut self, keycode: u8) {
