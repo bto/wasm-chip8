@@ -41,6 +41,6 @@ module.exports = {
     }),
   ],
   resolve: {
-    extensions: [".js", ".json", ".ts", ".tsx", ".wasm"],
+    extensions: [".wasm", ".tsx", ".ts", ".jsx", ".js", ".json"],
   },
 };

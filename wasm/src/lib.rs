@@ -113,14 +113,8 @@ impl Chip8 {
         obj
     }
 
-    pub fn get_state(&self, name: &str, idx: usize) -> u16 {
-        if name == "v" {
-            self.v[idx] as u16
-        } else if name == "stack" {
-            self.stack[idx] as u16
-        } else {
-            0
-        }
+    pub fn ptr_v(&self) -> *const u8 {
+        self.v.as_ptr()
     }
 
     pub fn set_key(&mut self, keycode: u8) {
