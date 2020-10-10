@@ -5,8 +5,9 @@ import { State } from "../store";
 
 const container: React.FC = () => {
     const ram = ReactRedux.useSelector((state: State) => state.ram);
+    const pc = ReactRedux.useSelector((state: State) => state.register.pc);
 
-    return <Component ram={ram} />;
+    return <Component ram={ram} pc={pc} />;
 };
 
 export default container;
