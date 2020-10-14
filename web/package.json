@@ -49,6 +49,7 @@
     "@types/react": "<16.14",
     "@types/react-dom": "<16.14",
     "@types/react-redux": "<7.3",
+    "bootstrap": "<4.6",
     "react": "<16.14",
     "react-bootstrap": "<1.4",
     "react-dom": "<16.14",
