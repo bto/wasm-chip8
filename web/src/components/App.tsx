@@ -1,5 +1,5 @@
 import * as React from "react";
-import "./App.scss";
+import "./style.scss";
 import Display from "../containers/Display";
 import Ram from "../containers/Ram";
 import Register from "../containers/Register";
