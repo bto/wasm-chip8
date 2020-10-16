@@ -56,6 +56,7 @@
     "react-bootstrap": "<1.4",
     "react-dom": "<16.14",
     "react-redux": "<7.3",
+    "react-router-dom": "<5.3",
     "redux": "<4.1",
     "typescript-fsa": "<3.1",
     "typescript-fsa-reducers": "<1.3"
