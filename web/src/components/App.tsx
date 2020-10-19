@@ -1,9 +1,7 @@
 import * as React from "react";
 import "./style.scss";
-import Header from "./Header";
-import Display from "../containers/Display";
-import Ram from "../containers/Ram";
-import Register from "../containers/Register";
+import { Header } from "./";
+import { Display, Ram, Register } from "../containers";
 
 const component: React.FC = () => (
     <div className="c-app">
