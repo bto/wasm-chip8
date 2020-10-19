@@ -1,7 +1,6 @@
 import * as React from "react";
 import "./style.scss";
-import { Header } from "./";
-import { Display, Ram, Register } from "../containers";
+import { Content, Header } from "./";
 
 const component: React.FC = () => (
     <div className="c-app">
@@ -9,17 +8,7 @@ const component: React.FC = () => (
         <div className="c-wrapper">
             <Header />
             <div className="c-body">
-                <main className="c-main">
-                    <div className="col-lg-6 col-sm-12">
-                        <Display />
-                    </div>
-                    <div className="col-lg-3 col-sm-6">
-                        <Ram />
-                    </div>
-                    <div className="col-lg-3 col-sm-6">
-                        <Register />
-                    </div>
-                </main>
+                <Content />
             </div>
         </div>
     </div>
