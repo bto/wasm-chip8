@@ -1,10 +1,10 @@
 import * as React from "react";
-import * as CoreUI from "@coreui/react";
+import { CHeader } from "@coreui/react";
 
 const component: React.FC = () => (
-    <CoreUI.CHeader className="container-fluid">
+    <CHeader>
         <h1 className="mx-auto my-auto">CHIP-8 emulator</h1>
-    </CoreUI.CHeader>
+    </CHeader>
 );
 
 export default component;
