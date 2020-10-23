@@ -1,6 +1,7 @@
 import * as React from "react";
 import { CContainer, CRow, CCol } from "@coreui/react";
-import { Display, Ram, Register } from "../containers";
+import { Display } from "./";
+import { Ram, Register } from "../containers";
 
 const component: React.FC = () => (
     <CContainer fluid={true}>
