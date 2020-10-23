@@ -9,7 +9,8 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir":"./dist",
+    "outDir": "./dist",
+    "strict": true,
     "target": "es6"
   },
   "include": [
