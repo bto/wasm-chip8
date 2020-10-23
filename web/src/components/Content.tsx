@@ -4,15 +4,17 @@ import { Display } from "./";
 import { Ram, Register } from "../containers";
 
 const component: React.FC = () => (
-    <CContainer fluid={true}>
+    <CContainer>
         <CRow>
-            <CCol lg="5" className="mx-auto">
+            <CCol>
                 <Display />
             </CCol>
-            <CCol md="4">
+        </CRow>
+        <CRow>
+            <CCol md="6">
                 <Ram />
             </CCol>
-            <CCol sm="3">
+            <CCol md="6">
                 <Register />
             </CCol>
         </CRow>
