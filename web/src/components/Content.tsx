@@ -4,7 +4,7 @@ import { Display } from "./";
 import { Ram, Register } from "../containers";
 
 const component: React.FC = () => (
-    <CContainer>
+    <CContainer fluid={true}>
         <CRow>
             <CCol>
                 <Display />

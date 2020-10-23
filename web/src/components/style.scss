@@ -1,5 +1,9 @@
 @import "~@coreui/coreui/scss/coreui.scss";
 
+.container-fluid {
+    max-width: 640px;
+}
+
 canvas {
     display: block;
 }
