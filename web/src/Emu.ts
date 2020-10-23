@@ -29,12 +29,12 @@ class Emu {
         const canvas = this.canvas;
         const chip8 = this.chip8;
 
-        const vram = new Uint8Array(memory.buffer, chip8.ptr_vram(), 64 * 32);
+        const vram = new Uint8Array(memory.buffer, chip8.ptr_vram(), this.HEIGHT * this.WIDTH);
         canvas.beginPath();
 
-        for (let col = 0; col <= this.HEIGHT; col++) {
-            for (let row = 0; row <= this.WIDTH; row++) {
-                const idx = row * this.WIDTH + col;
+        for (let row = 0; row <= this.WIDTH; row++) {
+            for (let col = 0; col <= this.HEIGHT; col++) {
+                const idx = col * this.WIDTH + row;
                 canvas.fillStyle = vram[idx] ? this.COLOR_ON : this.COLOR_OFF;
 
                 canvas.fillRect(
