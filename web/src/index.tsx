@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import * as ReactRedux from "react-redux";
 import App from "./components/App";
 import store from "./store";
-import("./chip8");
+import("./Emu");
 
 ReactDOM.render(
     <React.StrictMode>
