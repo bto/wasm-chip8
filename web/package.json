@@ -21,7 +21,7 @@
   "scripts": {
     "build": "webpack",
     "lint": "eslint .",
-    "start": "webpack-dev-server",
+    "start": "webpack-dev-server -d",
     "watch": "webpack --watch"
   },
   "devDependencies": {
