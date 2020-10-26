@@ -1,8 +1,8 @@
-import * as Redux from "redux";
+import * as ReduxToolkit from "@reduxjs/toolkit";
 import * as ram from "./ram";
 import * as register from "./register";
 
-export const reducer = Redux.combineReducers({
+export const reducer = ReduxToolkit.combineReducers({
     ram: ram.reducer,
     register: register.reducer,
 });
@@ -14,6 +14,8 @@ export const actions = {
 
 export type State = ReturnType<typeof reducer>;
 
-export const store: Redux.Store<State> = Redux.createStore(reducer);
+export const store = ReduxToolkit.configureStore<State>({
+    reducer,
+});
 
 export default store;
