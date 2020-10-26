@@ -1,6 +1,6 @@
 import * as ReduxToolkit from "@reduxjs/toolkit";
-import * as ram from "./ram";
-import * as register from "./register";
+import ram from "./ram";
+import register from "./register";
 
 export const reducer = ReduxToolkit.combineReducers({
     ram: ram.reducer,
