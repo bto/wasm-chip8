@@ -24,6 +24,11 @@ module.exports = {
         project: "./tsconfig.json",
       },
       plugins: ["@typescript-eslint", "react"],
+      settings: {
+        react: {
+          version: "detect"
+        }
+      },
     },
   ],
 };
