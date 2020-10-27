@@ -6,8 +6,8 @@ export default class Module {
         const nnn = (nibbles[1] << 8) | op2;
         const kk = op2;
         const x = nibbles[1];
-        // const y = nibbles[2];
-        // const z = nibbles[3];
+        const y = nibbles[2];
+        const n = nibbles[3];
 
         switch (nibbles[0]) {
             case 0x0:
@@ -34,23 +34,26 @@ export default class Module {
             case 0x4:
                 return this.decode_4xkk(x, kk);
             case 0x5:
+                if (nibbles[3] == 0x0) {
+                    return this.decode_5xy0(x, y);
+                }
                 break;
             case 0x6:
-                break;
+                return this.decode_6xkk(x, kk);
             case 0x7:
-                break;
+                return this.decode_7xkk(x, kk);
             case 0x8:
                 break;
             case 0x9:
                 break;
             case 0xa:
-                break;
+                return this.decode_annn(nnn);
             case 0xb:
-                break;
+                return this.decode_bnnn(nnn);
             case 0xc:
-                break;
+                return this.decode_cxkk(x, kk);
             case 0xd:
-                break;
+                return this.decode_dxyn(x, y, n);
             case 0xe:
                 break;
             case 0xf:
@@ -59,27 +62,52 @@ export default class Module {
                 break;
         }
 
-        return this.toHex(this.fetch(ram, pc), 4);
+        return "0x" + this.toHex(this.fetch(ram, pc), 4);
     };
 
     decode_00e0 = (): string => "CLS";
 
     decode_00ee = (): string => "RET";
 
-    decode_0nnn = (nnn: number): string => `SYS addr: ${this.toHex(nnn, 3)}`;
+    decode_0nnn = (nnn: number): string => this.decode_nnn("SYS", nnn);
 
-    decode_1nnn = (nnn: number): string => `JP addr: ${this.toHex(nnn, 3)}`;
+    decode_1nnn = (nnn: number): string => this.decode_nnn("JP", nnn);
 
-    decode_2nnn = (nnn: number): string => `CALL addr: ${this.toHex(nnn, 3)}`;
+    decode_2nnn = (nnn: number): string => this.decode_nnn("CALL", nnn);
 
     decode_3xkk = (x: number, kk: number): string =>
-        `SE V${this.toHex(x)}, ${this.toHex(kk, 2)}`;
+        this.decode_xkk("SE", x, kk);
 
     decode_4xkk = (x: number, kk: number): string =>
-        `SNE V${this.toHex(x)}, ${this.toHex(kk, 2)}`;
+        this.decode_xkk("SNE", x, kk);
+
+    decode_5xy0 = (x: number, y: number): string =>
+        `SE V${this.toHex(x)} V${this.toHex(y)}`;
+
+    decode_6xkk = (x: number, kk: number): string =>
+        this.decode_xkk("LD", x, kk);
+
+    decode_7xkk = (x: number, kk: number): string =>
+        this.decode_xkk("ADD", x, kk);
+
+    decode_annn = (nnn: number): string => this.decode_nnn("LD I", nnn);
+
+    decode_bnnn = (nnn: number): string => this.decode_nnn("JP V0", nnn);
+
+    decode_cxkk = (x: number, kk: number): string =>
+        this.decode_xkk("RND", x, kk);
+
+    decode_dxyn = (x: number, y: number, n: number): string =>
+        `DRW V${this.toHex(x)} V${this.toHex(y)} 0x${this.toHex(n)}`;
+
+    decode_nnn = (inst: string, nnn: number): string =>
+        `${inst} 0x${this.toHex(nnn, 3)}`;
+
+    decode_xkk = (inst: string, x: number, kk: number): string =>
+        `${inst} V${this.toHex(x)} 0x${this.toHex(kk, 2)}`;
 
     fetch = (ram: number[], pc: number): number => (ram[pc] << 8) | ram[pc + 1];
 
     toHex = (x: number, length = 0): string =>
-        "0x" + x.toString(16).toUpperCase().padStart(length, "0");
+        x.toString(16).toUpperCase().padStart(length, "0");
 }
