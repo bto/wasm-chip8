@@ -4,7 +4,8 @@ import { Props } from "../containers/Ram";
 const component: React.FC<Props> = ({ mod, pc, ram }: Props) => {
     const items = [];
     for (let i = 0; i <= 20; i++) {
-        items.push(`${mod.toAddr(pc + i)}: ${mod.decode(ram, pc + i)}`);
+        const addr = pc + i * 2;
+        items.push(`${mod.toAddr(addr)}: ${mod.decode(ram, addr)}`);
         items.push(<br />);
     }
 
