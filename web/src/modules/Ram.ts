@@ -65,6 +65,9 @@ export default class Module {
                 }
                 break;
             case 0x9:
+                if (nibbles[3] == 0x0) {
+                    return this.decode_9xy0(x, y);
+                }
                 break;
             case 0xa:
                 return this.decode_annn(nnn);
@@ -75,8 +78,32 @@ export default class Module {
             case 0xd:
                 return this.decode_dxyn(x, y, n);
             case 0xe:
+                if (nibbles[2] == 0x9 && nibbles[3] == 0xe) {
+                    return this.decode_ex9e(x);
+                } else if (nibbles[2] == 0xa && nibbles[3] == 0x1) {
+                    return this.decode_exa1(x);
+                }
                 break;
             case 0xf:
+                if (nibbles[2] == 0x0 && nibbles[3] == 0x7) {
+                    return this.decode_fx07(x);
+                } else if (nibbles[2] == 0x0 && nibbles[3] == 0xa) {
+                    return this.decode_fx0a(x);
+                } else if (nibbles[2] == 0x1 && nibbles[3] == 0x5) {
+                    return this.decode_fx15(x);
+                } else if (nibbles[2] == 0x1 && nibbles[3] == 0x8) {
+                    return this.decode_fx18(x);
+                } else if (nibbles[2] == 0x1 && nibbles[3] == 0xe) {
+                    return this.decode_fx1e(x);
+                } else if (nibbles[2] == 0x2 && nibbles[3] == 0x9) {
+                    return this.decode_fx29(x);
+                } else if (nibbles[2] == 0x3 && nibbles[3] == 0x3) {
+                    return this.decode_fx33(x);
+                } else if (nibbles[2] == 0x5 && nibbles[3] == 0x5) {
+                    return this.decode_fx55(x);
+                } else if (nibbles[2] == 0x6 && nibbles[3] == 0x5) {
+                    return this.decode_fx65(x);
+                }
                 break;
             default:
                 break;
@@ -128,6 +155,8 @@ export default class Module {
 
     decode_8x0e = (x: number): string => this.decode_x("LD", x);
 
+    decode_9xy0 = (x: number, y: number): string => this.decode_xy("SNE", x, y);
+
     decode_annn = (nnn: number): string => this.decode_nnn("LD I", nnn);
 
     decode_bnnn = (nnn: number): string => this.decode_nnn("JP V0", nnn);
@@ -138,10 +167,35 @@ export default class Module {
     decode_dxyn = (x: number, y: number, n: number): string =>
         this.decode_xyn("DRW", x, y, n);
 
+    decode_ex9e = (x: number): string => this.decode_x("SKP", x);
+
+    decode_exa1 = (x: number): string => this.decode_x("SKNP", x);
+
+    decode_fx07 = (x: number): string => this.decode_xa("LD", x, "DT");
+
+    decode_fx0a = (x: number): string => this.decode_xa("LD", x, "K");
+
+    decode_fx15 = (x: number): string => this.decode_x("LD DT", x);
+
+    decode_fx18 = (x: number): string => this.decode_x("LD ST", x);
+
+    decode_fx1e = (x: number): string => this.decode_x("ADD I", x);
+
+    decode_fx29 = (x: number): string => this.decode_x("LD F", x);
+
+    decode_fx33 = (x: number): string => this.decode_x("LD B", x);
+
+    decode_fx55 = (x: number): string => this.decode_x("LD [I]", x);
+
+    decode_fx65 = (x: number): string => this.decode_xa("LD", x, "[I]");
+
     decode_nnn = (inst: string, nnn: number): string =>
         `${inst} 0x${this.toHex(nnn, 3)}`;
 
     decode_x = (inst: string, x: number): string => `${inst} V${this.toHex(x)}`;
+
+    decode_xa = (inst: string, x: number, arg: string): string =>
+        `${inst} V${this.toHex(x)} ${arg}`;
 
     decode_xkk = (inst: string, x: number, kk: number): string =>
         `${inst} V${this.toHex(x)} 0x${this.toHex(kk, 2)}`;
