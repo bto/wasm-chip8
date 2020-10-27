@@ -1,4 +1,4 @@
-export default class Module {
+export default class EmuUtil {
     decode = (ram: number[], pc: number): string => {
         const op1 = ram[pc];
         const op2 = ram[pc + 1];
