@@ -25,6 +25,9 @@
     "watch": "webpack --watch"
   },
   "devDependencies": {
+    "@types/react": "<16.14",
+    "@types/react-dom": "<16.14",
+    "@types/react-redux": "<7.3",
     "@typescript-eslint/eslint-plugin": "<4.1",
     "@typescript-eslint/parser": "<4.1",
     "clean-webpack-plugin": "<3.1",
@@ -49,9 +52,6 @@
     "@coreui/coreui": "<3.4",
     "@coreui/react": "<3.4",
     "@reduxjs/toolkit": "<1.4",
-    "@types/react": "<16.14",
-    "@types/react-dom": "<16.14",
-    "@types/react-redux": "<7.3",
     "bootstrap": "<4.6",
     "react": "<16.14",
     "react-bootstrap": "<1.4",
