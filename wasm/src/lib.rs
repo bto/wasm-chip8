@@ -2,21 +2,8 @@ mod rom;
 use rom::*;
 
 use log::{error, trace};
-use rand;
 use std::fmt;
 use wasm_bindgen::prelude::*;
-
-
-#[wasm_bindgen]
-extern {
-        pub fn alert(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn greet(name: &str) {
-        alert(&format!("Hello, {}!", name));
-}
-
 
 const FONT_SET: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -408,7 +395,8 @@ impl Chip8 {
     // RND Vx, byte: Set Vx = random byte AND kk
     fn op_cxkk(&mut self, x: usize, kk: u8) -> Pc {
         trace!("RND V{:X} {:02X}", x, kk);
-        self.v[x] = rand::random::<u8>() & kk;
+        let rnd = (js_sys::Math::random() * 255.0).floor() as u8;
+        self.v[x] = rnd & kk;
         Pc::Inc
     }
 

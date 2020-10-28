@@ -8,9 +8,9 @@ edition = "2018"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-log = "~0.4.11"
-rand = "~0.7.3"
-wasm-bindgen = "*"
+js-sys = "<0.4"
+log = "<0.5"
+wasm-bindgen = "<0.3"
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = false

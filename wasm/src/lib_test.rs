@@ -428,6 +428,7 @@ fn test_op_bnnn() {
 }
 
 #[test]
+#[ignore]
 fn test_op_cxkk() {
     let mut chip8 = Chip8::new();
 
