@@ -2,15 +2,38 @@ import { Chip8 } from "./wasm/chip8";
 import { memory } from "./wasm/chip8_bg";
 import { actions, store } from "./store";
 
+interface KeyMap {
+    [key: number]: number;
+}
+
 class Emu {
+    protected canvas: CanvasRenderingContext2D;
+    protected chip8: Chip8;
+
     COLOR_OFF = "#FFFFFF";
     COLOR_ON = "#000000";
     PIXEL_SIZE = 10;
     HEIGHT = 32;
     WIDTH = 64;
 
-    protected canvas: CanvasRenderingContext2D;
-    protected chip8: Chip8;
+    KEYMAP: KeyMap = {
+        88: 0x0, // X
+        49: 0x1, // 1
+        50: 0x2, // 2
+        51: 0x3, // 3
+        81: 0x4, // q
+        87: 0x5, // w
+        69: 0x6, // e
+        65: 0x7, // a
+        83: 0x8, // s
+        68: 0x9, // d
+        90: 0xa, // z
+        67: 0xb, // c
+        52: 0xc, // 4
+        82: 0xd, // r
+        70: 0xe, // f
+        86: 0xf, // v
+    };
 
     public constructor() {
         this.chip8 = Chip8.new();
@@ -19,6 +42,8 @@ class Emu {
         canvas.height = this.PIXEL_SIZE * this.HEIGHT;
         canvas.width = this.PIXEL_SIZE * this.WIDTH;
         this.canvas = canvas.getContext("2d") as CanvasRenderingContext2D;
+
+        addEventListener("keydown", this.setKey);
     }
 
     public run = (): void => {
@@ -92,6 +117,10 @@ class Emu {
             }
         }
         canvas.putImageData(image, 0, 0);
+    };
+
+    protected setKey = (e: KeyboardEvent): void => {
+        this.chip8.set_key(this.KEYMAP[e.keyCode]);
     };
 
     protected showMemory = (): void => {
