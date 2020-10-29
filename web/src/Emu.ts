@@ -83,12 +83,12 @@ class Emu {
                 image.data[idx + 0] = 0x00;
                 image.data[idx + 1] = 0x00;
                 image.data[idx + 2] = 0x00;
-                image.data[idx + 3] = 0xFF;
+                image.data[idx + 3] = 0xff;
             } else {
-                image.data[idx + 0] = 0xFF;
-                image.data[idx + 1] = 0xFF;
-                image.data[idx + 2] = 0xFF;
-                image.data[idx + 3] = 0xFF;
+                image.data[idx + 0] = 0xff;
+                image.data[idx + 1] = 0xff;
+                image.data[idx + 2] = 0xff;
+                image.data[idx + 3] = 0xff;
             }
         }
         canvas.putImageData(image, 0, 0);
