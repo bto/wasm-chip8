@@ -63,8 +63,35 @@ class Emu {
                 );
             }
         }
-
         canvas.stroke();
+    };
+
+    protected renderImage = (): void => {
+        const canvas = this.canvas;
+        const chip8 = this.chip8;
+
+        const vram = new Uint8Array(
+            memory.buffer,
+            chip8.ptr_vram(),
+            this.HEIGHT * this.WIDTH
+        );
+
+        const image = canvas.createImageData(this.WIDTH, this.HEIGHT);
+        for (let i = 0; i < vram.length; i++) {
+            const idx = i * 4;
+            if (vram[i]) {
+                image.data[idx + 0] = 0x00;
+                image.data[idx + 1] = 0x00;
+                image.data[idx + 2] = 0x00;
+                image.data[idx + 3] = 0xFF;
+            } else {
+                image.data[idx + 0] = 0xFF;
+                image.data[idx + 1] = 0xFF;
+                image.data[idx + 2] = 0xFF;
+                image.data[idx + 3] = 0xFF;
+            }
+        }
+        canvas.putImageData(image, 0, 0);
     };
 
     protected showMemory = (): void => {
@@ -75,7 +102,7 @@ class Emu {
             new Uint8Array(memory.buffer, chip8.ptr_ram(), 0xfff)
         );
         dispatch(actions.ram.set(ram));
-    }
+    };
 
     protected showRegisters = (): void => {
         const chip8 = this.chip8;
@@ -87,7 +114,7 @@ class Emu {
 
         const v = Array.from(new Uint8Array(memory.buffer, chip8.ptr_v(), 16));
         dispatch(actions.register.setV(v));
-    }
+    };
 }
 
 const emu = new Emu();
