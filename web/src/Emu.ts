@@ -34,7 +34,8 @@ class Emu {
             this.render();
         }
 
-        this.update();
+        this.showMemory();
+        this.showRegisters();
         this.run();
     };
 
@@ -66,7 +67,17 @@ class Emu {
         canvas.stroke();
     };
 
-    protected update = (): void => {
+    protected showMemory = (): void => {
+        const chip8 = this.chip8;
+        const dispatch = store.dispatch;
+
+        const ram = Array.from(
+            new Uint8Array(memory.buffer, chip8.ptr_ram(), 0xfff)
+        );
+        dispatch(actions.ram.set(ram));
+    }
+
+    protected showRegisters = (): void => {
         const chip8 = this.chip8;
         const dispatch = store.dispatch;
 
@@ -76,12 +87,7 @@ class Emu {
 
         const v = Array.from(new Uint8Array(memory.buffer, chip8.ptr_v(), 16));
         dispatch(actions.register.setV(v));
-
-        const ram = Array.from(
-            new Uint8Array(memory.buffer, chip8.ptr_ram(), 0xfff)
-        );
-        dispatch(actions.ram.set(ram));
-    };
+    }
 }
 
 const emu = new Emu();
