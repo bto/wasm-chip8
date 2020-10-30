@@ -3,6 +3,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const ESLintWebpackPlugin = require("eslint-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
+const WriteFilePlugin = require("write-file-webpack-plugin");
 
 module.exports = {
   devServer: {
@@ -43,6 +44,7 @@ module.exports = {
       template: path.resolve(__dirname, "src/index.ejs"),
       title: "WASM CHIP-8 written in Rust",
     }),
+    new WriteFilePlugin(),
   ],
   resolve: {
     extensions: [".wasm", ".tsx", ".ts", ".jsx", ".js", ".json"],
