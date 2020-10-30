@@ -19,9 +19,9 @@
     "chip8"
   ],
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --config webpack.prod.js",
     "lint": "eslint .",
-    "start": "webpack-dev-server -d",
+    "start": "webpack-dev-server -d --config webpack.dev.js",
     "watch": "webpack --watch"
   },
   "devDependencies": {
@@ -47,6 +47,7 @@
     "webpack": "<4.45",
     "webpack-cli": "<3.4",
     "webpack-dev-server": "<3.12",
+    "webpack-merge": "<5.3",
     "write-file-webpack-plugin": "<4.6"
   },
   "dependencies": {
