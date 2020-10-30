@@ -1,14 +1,10 @@
-![](demo.gif)
-
 # 概要
 
-Rust で実装されたターミナルで動作するシンプルな Chip8 エミュレータです
+Rust で実装された CHIP-8 エミュレータを WASM で出力して、フロントを React + Redux で実装しました
 
-# 使い方
+# デモ
 
-```
-$ cargo run ./roms/BRIX
-```
+[デモ](https://bto.github.io/wasm-chip8/)
 
 # キーボードレイアウト
 
