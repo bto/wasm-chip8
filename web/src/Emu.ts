@@ -46,6 +46,19 @@ class Emu {
         addEventListener("keydown", this.setKey);
     }
 
+    public loadRom = (romName: string): void => {
+        fetch(`roms/${romName}`)
+            .then((response) => response.arrayBuffer())
+            .then((buffer): void => {
+                const ram_addr = this.chip8.ptr_ram();
+                const rom = new Uint8Array(buffer, 0, buffer.byteLength);
+                const ram = new Uint8Array(memory.buffer, ram_addr, 0xfff);
+                rom.forEach((v, i) => {
+                    ram[0x200 + i] = v;
+                });
+            });
+    };
+
     public run = (): void => {
         requestAnimationFrame(this.loop);
     };
@@ -147,4 +160,5 @@ class Emu {
 }
 
 const emu = new Emu();
+emu.loadRom("BRIX");
 emu.run();
