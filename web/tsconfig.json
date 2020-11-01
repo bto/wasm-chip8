@@ -6,11 +6,13 @@
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
+    "noImplicitThis": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "./dist",
     "strict": true,
+    "strictNullChecks": true,
     "target": "es6"
   },
   "include": [
