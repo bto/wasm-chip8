@@ -1,9 +1,12 @@
 "use strict";
 const { merge } = require("webpack-merge");
+const CopyPlugin = require("copy-webpack-plugin");
+const WriteFilePlugin = require("write-file-webpack-plugin");
 const path = require("path");
 const common = require("./webpack.common.js");
 
-const distDir = path.resolve(__dirname, "..", "dist");
+const topDir = path.resolve(__dirname, "..", "..");
+const distDir = path.resolve(topDir, "web", "dist");
 
 module.exports = merge(common, {
   devServer: {
@@ -17,4 +20,15 @@ module.exports = merge(common, {
     filename: "[name].js",
     path: distDir,
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(topDir, "roms"),
+          to: path.resolve(distDir, "roms"),
+        },
+      ],
+    }),
+    new WriteFilePlugin(),
+  ],
 });
