@@ -19,9 +19,9 @@
     "chip8"
   ],
   "scripts": {
-    "build": "webpack --config webpack.prod.js",
+    "build": "webpack --config config/webpack.prod.js",
     "lint": "eslint .",
-    "start": "webpack-dev-server -d --config webpack.dev.js",
+    "start": "webpack-dev-server -d",
     "watch": "webpack --watch"
   },
   "devDependencies": {

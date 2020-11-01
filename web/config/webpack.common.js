@@ -6,13 +6,7 @@ const path = require("path");
 const WriteFilePlugin = require("write-file-webpack-plugin");
 
 module.exports = {
-  devServer: {
-    contentBase: path.resolve(__dirname, "dist"),
-    host: "0.0.0.0",
-    open: true,
-  },
-  devtool: "inline-source-map",
-  entry: path.resolve(__dirname, "src"),
+  entry: path.resolve(__dirname, "..", "src"),
   mode: process.env.NODE_ENV || "development",
   module: {
     rules: [
@@ -31,17 +25,13 @@ module.exports = {
       },
     ],
   },
-  output: {
-    filename: "[name].[contenthash].js",
-    path: path.resolve(__dirname, "dist"),
-  },
   plugins: [
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
     }),
     new ESLintWebpackPlugin({}),
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "src/index.ejs"),
+      template: path.resolve(__dirname, "..", "src/index.ejs"),
       title: "WASM CHIP-8 written in Rust",
     }),
     new WriteFilePlugin(),
