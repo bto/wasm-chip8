@@ -1,10 +1,15 @@
 import * as React from "react";
 import { CContainer, CRow, CCol } from "@coreui/react";
-import { Display } from "./";
+import { Controller, Display } from "./";
 import { Ram, Register } from "../containers";
 
 const component: React.FC = () => (
     <CContainer fluid={true}>
+        <CRow>
+            <CCol>
+                <Controller />
+            </CCol>
+        </CRow>
         <CRow>
             <CCol>
                 <Display />
