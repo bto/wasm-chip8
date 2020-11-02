@@ -73,6 +73,12 @@ pub struct Chip8 {
     pub vram_changed: bool,
 }
 
+impl Default for Chip8 {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[wasm_bindgen]
 impl Chip8 {
     pub fn new() -> Self {
@@ -134,8 +140,8 @@ impl Chip8 {
     }
 
     fn load_fontset(&mut self) {
-        for i in 0..FONT_SET.len() {
-            self.ram[i] = FONT_SET[i];
+        for (i, font) in FONT_SET.iter().enumerate() {
+            self.ram[i] = *font;
         }
     }
 
@@ -548,7 +554,7 @@ impl fmt::Display for Chip8 {
                     write!(f, "◻")?;
                 }
             }
-            write!(f, "\n")?
+            writeln!(f)?
         }
         Ok(())
     }
