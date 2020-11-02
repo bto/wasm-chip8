@@ -6,7 +6,7 @@ interface KeyMap {
     [key: number]: number;
 }
 
-class Emu {
+export default class Emu {
     protected canvas: CanvasRenderingContext2D;
     protected chip8: Chip8;
 
@@ -158,6 +158,3 @@ class Emu {
         dispatch(actions.register.setV(v));
     };
 }
-
-const emu = new Emu();
-emu.loadRom("BRIX").then((): void => emu.run());
