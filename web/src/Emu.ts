@@ -46,8 +46,8 @@ class Emu {
         addEventListener("keydown", this.setKey);
     }
 
-    public loadRom = (romName: string): void => {
-        fetch(`roms/${romName}`)
+    public loadRom = (romName: string): Promise<void> => {
+        return fetch(`roms/${romName}`)
             .then((response) => response.arrayBuffer())
             .then((buffer): void => {
                 const ram_addr = this.chip8.ptr_ram();
@@ -160,5 +160,4 @@ class Emu {
 }
 
 const emu = new Emu();
-emu.loadRom("BRIX");
-emu.run();
+emu.loadRom("BRIX").then((): void => emu.run());

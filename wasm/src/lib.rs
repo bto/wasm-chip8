@@ -1,6 +1,3 @@
-mod rom;
-use rom::*;
-
 use log::{error, trace};
 use std::fmt;
 use wasm_bindgen::prelude::*;
@@ -96,7 +93,6 @@ impl Chip8 {
         };
 
         obj.load_fontset();
-        obj.load_rom();
         obj
     }
 
@@ -140,12 +136,6 @@ impl Chip8 {
     fn load_fontset(&mut self) {
         for i in 0..FONT_SET.len() {
             self.ram[i] = FONT_SET[i];
-        }
-    }
-
-    fn load_rom(&mut self) {
-        for i in 0..ROM_BRIX.len() {
-            self.ram[i + START_ADDR] = ROM_BRIX[i];
         }
     }
 
