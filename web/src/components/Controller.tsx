@@ -3,7 +3,19 @@ import emu from "../Emu";
 
 const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     emu.stop();
-    emu.loadRom(e.target.value).then((): void => emu.run());
+
+    const rom = e.target.value;
+    requestAnimationFrame(() => {
+        emu.loadRom(rom);
+    });
+};
+
+const start = () => {
+    emu.run();
+};
+
+const stop = () => {
+    emu.stop();
 };
 
 const component: React.FC = () => (
@@ -33,6 +45,8 @@ const component: React.FC = () => (
             <option value="VERS">VERS</option>
             <option value="WIPEOFF">WIPEOFF</option>
         </select>
+        <button onClick={() => start()}>Start</button>
+        <button onClick={() => stop()}>Stop</button>
     </div>
 );
 
