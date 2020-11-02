@@ -171,7 +171,6 @@ impl Chip8 {
         let n = nibbles.3 as usize;
 
         match nibbles {
-            (0x00, 0x00, 0x00, 0x00) => self.op_0000(),
             (0x00, 0x00, 0x0E, 0x00) => self.op_00e0(),
             (0x00, 0x00, 0x0E, 0x0E) => self.op_00ee(),
             (0x00, _, _, _) => self.op_0nnn(nnn),
@@ -215,10 +214,6 @@ impl Chip8 {
     fn op_not_impl(&self) -> Pc {
         error!("Not implemented yet");
         Pc::Inc
-    }
-
-    fn op_0000(&self) -> Pc {
-        std::process::exit(0);
     }
 
     // CLS: Clear the display
