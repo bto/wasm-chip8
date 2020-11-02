@@ -7,7 +7,6 @@ interface KeyMap {
 }
 
 export default class Emu {
-    protected canvas: CanvasRenderingContext2D;
     protected chip8: Chip8;
 
     COLOR_OFF = "#FFFFFF";
@@ -37,11 +36,6 @@ export default class Emu {
 
     public constructor() {
         this.chip8 = Chip8.new();
-
-        const canvas = document.getElementById("display") as HTMLCanvasElement;
-        canvas.height = this.PIXEL_SIZE * this.HEIGHT;
-        canvas.width = this.PIXEL_SIZE * this.WIDTH;
-        this.canvas = canvas.getContext("2d") as CanvasRenderingContext2D;
 
         addEventListener("keydown", this.setKey);
     }
@@ -78,22 +72,24 @@ export default class Emu {
     };
 
     protected render = (): void => {
-        const canvas = this.canvas;
         const chip8 = this.chip8;
+
+        const canvas = document.getElementById("display") as HTMLCanvasElement;
+        const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
         const vram = new Uint8Array(
             memory.buffer,
             chip8.ptr_vram(),
             this.HEIGHT * this.WIDTH
         );
-        canvas.beginPath();
+        ctx.beginPath();
 
         for (let col = 0; col <= this.HEIGHT; col++) {
             for (let row = 0; row <= this.WIDTH; row++) {
                 const idx = col * this.WIDTH + row;
-                canvas.fillStyle = vram[idx] ? this.COLOR_ON : this.COLOR_OFF;
+                ctx.fillStyle = vram[idx] ? this.COLOR_ON : this.COLOR_OFF;
 
-                canvas.fillRect(
+                ctx.fillRect(
                     row * this.PIXEL_SIZE,
                     col * this.PIXEL_SIZE,
                     this.PIXEL_SIZE,
@@ -101,12 +97,14 @@ export default class Emu {
                 );
             }
         }
-        canvas.stroke();
+        ctx.stroke();
     };
 
     protected renderImage = (): void => {
-        const canvas = this.canvas;
         const chip8 = this.chip8;
+
+        const canvas = document.getElementById("display") as HTMLCanvasElement;
+        const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
         const vram = new Uint8Array(
             memory.buffer,
@@ -114,7 +112,7 @@ export default class Emu {
             this.HEIGHT * this.WIDTH
         );
 
-        const image = canvas.createImageData(this.WIDTH, this.HEIGHT);
+        const image = ctx.createImageData(this.WIDTH, this.HEIGHT);
         for (let i = 0; i < vram.length; i++) {
             const idx = i * 4;
             if (vram[i]) {
@@ -129,7 +127,7 @@ export default class Emu {
                 image.data[idx + 3] = 0xff;
             }
         }
-        canvas.putImageData(image, 0, 0);
+        ctx.putImageData(image, 0, 0);
     };
 
     protected setKey = (e: KeyboardEvent): void => {
