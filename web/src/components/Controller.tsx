@@ -1,7 +1,8 @@
 import * as React from "react";
+import emu from "../Emu";
 
 const onChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(e.target.value);
+    emu.loadRom(e.target.value).then((): void => emu.run());
 };
 
 const component: React.FC = () => (

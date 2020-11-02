@@ -6,7 +6,7 @@ interface KeyMap {
     [key: number]: number;
 }
 
-export default class Emu {
+export class Emu {
     protected chip8: Chip8;
 
     COLOR_OFF = "#FFFFFF";
@@ -41,6 +41,8 @@ export default class Emu {
     }
 
     public loadRom = (romName: string): Promise<void> => {
+        this.chip8 = Chip8.new();
+
         return fetch(`roms/${romName}`)
             .then((response) => response.arrayBuffer())
             .then((buffer): void => {
@@ -156,3 +158,7 @@ export default class Emu {
         dispatch(actions.register.setV(v));
     };
 }
+
+const emu = new Emu();
+
+export default emu;
