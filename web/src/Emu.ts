@@ -7,6 +7,8 @@ interface KeyMap {
 }
 
 export class Emu {
+    public running = false;
+
     protected chip8: Chip8;
 
     COLOR_OFF = "#FFFFFF";
@@ -56,10 +58,11 @@ export class Emu {
     };
 
     public run = (): void => {
-        requestAnimationFrame(this.loop);
+        this.running = true;
+        this.loop();
     };
 
-    protected loop = (): void => {
+    public step = (): void => {
         const chip8 = this.chip8;
 
         chip8.run();
@@ -70,7 +73,17 @@ export class Emu {
 
         this.showMemory();
         this.showRegisters();
-        this.run();
+    };
+
+    public stop = (): void => {
+        this.running = false;
+    };
+
+    protected loop = (): void => {
+        this.step();
+        if (this.running) {
+            requestAnimationFrame(this.loop);
+        }
     };
 
     protected render = (): void => {

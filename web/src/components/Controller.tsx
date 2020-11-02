@@ -2,6 +2,7 @@ import * as React from "react";
 import emu from "../Emu";
 
 const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    emu.stop();
     emu.loadRom(e.target.value).then((): void => emu.run());
 };
 
