@@ -1,14 +1,8 @@
 import * as React from "react";
 import emu from "../Emu";
 
-const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    emu.stop();
-
-    const rom = e.target.value;
-    requestAnimationFrame(() => {
-        emu.loadRom(rom);
-    });
-};
+const onChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
+    emu.loadRom(e.target.value);
 
 const start = () => {
     emu.run();

@@ -43,17 +43,22 @@ export class Emu {
     }
 
     public loadRom = (romName: string): Promise<void> => {
-        this.chip8 = Chip8.new();
+        this.stop();
 
         return fetch(`roms/${romName}`)
             .then((response) => response.arrayBuffer())
             .then((buffer): void => {
-                const ram_addr = this.chip8.ptr_ram();
-                const rom = new Uint8Array(buffer, 0, buffer.byteLength);
+                const chip8 = Chip8.new();
+
+                const ram_addr = chip8.ptr_ram();
                 const ram = new Uint8Array(memory.buffer, ram_addr, 0xfff);
+
+                const rom = new Uint8Array(buffer, 0, buffer.byteLength);
                 rom.forEach((v, i) => {
                     ram[0x200 + i] = v;
                 });
+
+                requestAnimationFrame(() => (this.chip8 = chip8));
             });
     };
 
