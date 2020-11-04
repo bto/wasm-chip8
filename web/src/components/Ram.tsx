@@ -7,6 +7,7 @@ const component: React.FC<Props> = ({ pc, ram }: Props) => {
 
     return (
         <div>
+            <h2>メモリ</h2>
             {ram.slice(pc, pc + 40).map((_, i) => {
                 const addr = pc + i;
                 if (addr % 2 == 1) return;

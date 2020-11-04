@@ -3,7 +3,7 @@ import { CHeader } from "@coreui/react";
 
 const component: React.FC = () => (
     <CHeader>
-        <h1 className="mx-auto my-auto">CHIP-8 emulator</h1>
+        <h1 className="mx-auto my-auto">CHIP-8エミュレータ</h1>
     </CHeader>
 );
 

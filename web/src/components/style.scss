@@ -1,11 +1,17 @@
 @import "~@coreui/coreui/scss/coreui.scss";
 
-.container-fluid {
-    max-width: 640px;
-}
-
 canvas {
     display: block;
     // transform: scale(8);
     // transform-origin: top left;
+}
+
+.container-fluid {
+    max-width: 640px;
+}
+
+#description {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-size: 15px;
 }

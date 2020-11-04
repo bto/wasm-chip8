@@ -7,6 +7,7 @@ const component: React.FC<Props> = ({ i, sp, pc, v }: Props) => {
 
     return (
         <div>
+            <h2>レジスタ</h2>
             {v.map((v, i) => (
                 <div key={i}>
                     V{util.toHex(i)}: 0x{util.toHex(v, 2)}
