@@ -2,18 +2,17 @@ import * as React from "react";
 import { Props } from "../containers/Ram";
 import EmuUtil from "../EmuUtil";
 
-const component: React.FC<Props> = ({ pc, ram }: Props) => {
+const component: React.FC<Props> = ({ ram }: Props) => {
     const util = new EmuUtil();
 
     return (
         <div>
             <h2>メモリ</h2>
-            {ram.slice(pc, pc + 40).map((_, i) => {
-                const addr = pc + i;
-                if (addr % 2 == 1) return;
+            {ram.map((_, i) => {
+                if (i % 2 == 1) return;
                 return (
-                    <div key={addr}>
-                        0x{util.toHex(addr, 3)}: {util.decode(ram, addr)}
+                    <div key={i}>
+                        0x{util.toHex(i, 3)}: {util.decode(ram, i)}
                     </div>
                 );
             })}

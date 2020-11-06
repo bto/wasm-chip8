@@ -51,14 +51,17 @@ export class Emu {
                 const chip8 = Chip8.new();
 
                 const ram_addr = chip8.ptr_ram();
-                const ram = new Uint8Array(memory.buffer, ram_addr, 0xfff);
+                const ram = new Uint8Array(memory.buffer, ram_addr, 0x200 + buffer.byteLength);
 
                 const rom = new Uint8Array(buffer, 0, buffer.byteLength);
                 rom.forEach((v, i) => {
                     ram[0x200 + i] = v;
                 });
 
-                requestAnimationFrame(() => (this.chip8 = chip8));
+                requestAnimationFrame(() => {
+                    this.chip8 = chip8;
+                    store.dispatch(actions.ram.set(Array.from(ram)));
+                });
             });
     };
 
@@ -76,7 +79,6 @@ export class Emu {
             this.render();
         }
 
-        this.showMemory();
         this.showRegisters();
     };
 
@@ -152,16 +154,6 @@ export class Emu {
 
     protected setKey = (e: KeyboardEvent): void => {
         this.chip8.set_key(this.KEYMAP[e.keyCode]);
-    };
-
-    protected showMemory = (): void => {
-        const chip8 = this.chip8;
-        const dispatch = store.dispatch;
-
-        const ram = Array.from(
-            new Uint8Array(memory.buffer, chip8.ptr_ram(), 0xfff)
-        );
-        dispatch(actions.ram.set(ram));
     };
 
     protected showRegisters = (): void => {
