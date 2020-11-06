@@ -12,7 +12,7 @@ const component: React.FC<Props> = ({ ram }: Props) => {
                 if (i % 2 == 1) return;
                 return (
                     <div key={i}>
-                        0x{util.toHex(i, 3)}: {util.decode(ram, i)}
+                        0x{util.toHex(i + 0x200, 3)}: {util.decode(ram, i)}
                     </div>
                 );
             })}

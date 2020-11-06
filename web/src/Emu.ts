@@ -50,12 +50,13 @@ export class Emu {
             .then((buffer): void => {
                 const chip8 = Chip8.new();
 
-                const ram_addr = chip8.ptr_ram();
-                const ram = new Uint8Array(memory.buffer, ram_addr, 0x200 + buffer.byteLength);
-
-                const rom = new Uint8Array(buffer, 0, buffer.byteLength);
-                rom.forEach((v, i) => {
-                    ram[0x200 + i] = v;
+                const ram = new Uint8Array(
+                    memory.buffer,
+                    chip8.ptr_ram() + 0x200,
+                    buffer.byteLength
+                );
+                new Uint8Array(buffer, 0, buffer.byteLength).forEach((v, i) => {
+                    ram[i] = v;
                 });
 
                 requestAnimationFrame(() => {
