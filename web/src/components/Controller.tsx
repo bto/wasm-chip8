@@ -12,6 +12,10 @@ const component: React.FC = () => {
         setRunning(emu.running);
     };
 
+    const step = () => {
+        emu.step();
+    }
+
     const stop = () => {
         emu.stop();
         setRunning(emu.running);
@@ -50,6 +54,7 @@ const component: React.FC = () => {
                 <option value="WIPEOFF">WIPEOFF</option>
             </select>
             {startButton}
+            <button onClick={step}>Step</button>
         </div>
     );
 }
