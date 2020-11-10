@@ -17,9 +17,9 @@ const component: React.FC = () => {
         setRunning(emu.running);
     };
 
-    let startButton = <button onClick={() => start()}>Start</button>;
+    let startButton = <button onClick={start}>Start</button>;
     if (running) {
-        startButton = <button onClick={() => stop()}>Stop</button>;
+        startButton = <button onClick={stop}>Stop</button>;
     }
 
     return (
