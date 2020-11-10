@@ -1,7 +1,7 @@
 import * as React from "react";
 
 const component: React.FC = () => (
-    <div id="description">
+    <div id="description-component">
         <div>
             Rustで実装したCHIP-8エミュレータをWASMで出力して、フロントをReact+Redux+Typescriptで実装しました。
         </div>

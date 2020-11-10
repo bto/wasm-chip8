@@ -10,8 +10,13 @@ canvas {
     max-width: 640px;
 }
 
-#description {
+#description-component {
     padding-top: 20px;
     padding-bottom: 20px;
     font-size: 15px;
+}
+
+#ram-content {
+    height: 640px;
+    overflow-y: scroll;
 }
