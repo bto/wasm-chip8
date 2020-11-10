@@ -16,6 +16,11 @@ canvas {
     font-size: 15px;
 }
 
+.ram-current {
+    color: #FFFFFF;
+    background-color: #000000;
+}
+
 #ram-content {
     height: 640px;
     overflow-y: scroll;
