@@ -2,7 +2,7 @@ import * as React from "react";
 import emu from "../Emu";
 
 const component: React.FC = () => {
-    const [running, setRunning ] = React.useState(false);
+    const [running, setRunning] = React.useState(false);
 
     const onChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
         emu.loadRom(e.target.value);
@@ -14,7 +14,7 @@ const component: React.FC = () => {
 
     const step = () => {
         emu.step();
-    }
+    };
 
     const stop = () => {
         emu.stop();
@@ -57,6 +57,6 @@ const component: React.FC = () => {
             <button onClick={step}>Step</button>
         </div>
     );
-}
+};
 
 export default component;
