@@ -1,8 +1,8 @@
 "use strict";
+const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const ESLintWebpackPlugin = require("eslint-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const path = require("path");
 
 module.exports = {
   entry: path.resolve(__dirname, "..", "src"),

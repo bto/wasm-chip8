@@ -1,9 +1,9 @@
 "use strict";
 const { merge } = require("webpack-merge");
-const CopyPlugin = require("copy-webpack-plugin");
-const WriteFilePlugin = require("write-file-webpack-plugin");
 const path = require("path");
 const common = require("./webpack.common.js");
+const CopyPlugin = require("copy-webpack-plugin");
+const WriteFilePlugin = require("write-file-webpack-plugin");
 
 const topDir = path.resolve(__dirname, "..", "..");
 const distDir = path.resolve(topDir, "web", "dist");
