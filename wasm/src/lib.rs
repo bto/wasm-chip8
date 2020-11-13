@@ -26,8 +26,7 @@ const DISPLAY_WIDTH: usize = 64;
 const MEMSIZE: usize = 0xFFF;
 const START_ADDR: usize = 0x200;
 
-#[derive(Debug)]
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Pc {
     Inc,
     Skip,
@@ -206,7 +205,7 @@ impl Chip8 {
             (0x0F, _, 0x03, 0x03) => self.op_fx33(x),
             (0x0F, _, 0x05, 0x05) => self.op_fx55(x),
             (0x0F, _, 0x06, 0x05) => self.op_fx65(x),
-            _ => panic!("{:04X}: {:04X} is invalid opcode", self.pc, opcode)
+            _ => panic!("{:04X}: {:04X} is invalid opcode", self.pc, opcode),
         }
     }
 
@@ -327,11 +326,7 @@ impl Chip8 {
     // SUB Vx, Vy: Set Vx = Vx - Vy, set VF = NOT borrow
     fn op_8xy5(&mut self, x: usize, y: usize) -> Pc {
         trace!("SUB V{:X} V{:X}", x, y);
-        self.v[0xF] = if self.v[x] > self.v[y] {
-            1
-        } else {
-            0
-        };
+        self.v[0xF] = if self.v[x] > self.v[y] { 1 } else { 0 };
         self.v[x] = self.v[x].wrapping_sub(self.v[y]);
         Pc::Inc
     }
@@ -347,11 +342,7 @@ impl Chip8 {
     // SUBN Vx, Vy: Set Vx = Vy - Vx, set VF = NOT borrow
     fn op_8xy7(&mut self, x: usize, y: usize) -> Pc {
         trace!("SUBN V{:X} V{:X}", x, y);
-        self.v[0xF] = if self.v[y] > self.v[x] {
-            1
-        } else {
-            0
-        };
+        self.v[0xF] = if self.v[y] > self.v[x] { 1 } else { 0 };
         self.v[x] = self.v[y].wrapping_sub(self.v[x]);
         Pc::Inc
     }
@@ -509,7 +500,7 @@ impl Chip8 {
 
     fn set_pc(&mut self, pc: &Pc) {
         match *pc {
-            Pc::Inc => self.pc +=2,
+            Pc::Inc => self.pc += 2,
             Pc::Skip => self.pc += 4,
             Pc::Jump(addr) => self.pc = addr,
         }
@@ -518,20 +509,48 @@ impl Chip8 {
     fn trace_status(&self) {
         trace!(
             "v0_7 = [{:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}]",
-            self.v[0x0], self.v[0x1], self.v[0x2], self.v[0x3], self.v[0x4], self.v[0x5], self.v[0x6], self.v[0x7]
+            self.v[0x0],
+            self.v[0x1],
+            self.v[0x2],
+            self.v[0x3],
+            self.v[0x4],
+            self.v[0x5],
+            self.v[0x6],
+            self.v[0x7]
         );
         trace!(
             "v8_F = [{:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}, {:02X}]",
-            self.v[0x8], self.v[0x9], self.v[0xA], self.v[0xB], self.v[0xC], self.v[0xD], self.v[0xE], self.v[0xF]
+            self.v[0x8],
+            self.v[0x9],
+            self.v[0xA],
+            self.v[0xB],
+            self.v[0xC],
+            self.v[0xD],
+            self.v[0xE],
+            self.v[0xF]
         );
         trace!("i = {:04X}", self.i);
         trace!(
             "stack0_7 = [{:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}]",
-            self.stack[0x0], self.stack[0x1], self.stack[0x2], self.stack[0x3], self.stack[0x4], self.stack[0x5], self.stack[0x6], self.stack[0x7],
+            self.stack[0x0],
+            self.stack[0x1],
+            self.stack[0x2],
+            self.stack[0x3],
+            self.stack[0x4],
+            self.stack[0x5],
+            self.stack[0x6],
+            self.stack[0x7],
         );
         trace!(
             "stack8_F = [{:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}, {:04X}]",
-            self.stack[0x8], self.stack[0x9], self.stack[0xA], self.stack[0xB], self.stack[0xC], self.stack[0xD], self.stack[0xE], self.stack[0xF],
+            self.stack[0x8],
+            self.stack[0x9],
+            self.stack[0xA],
+            self.stack[0xB],
+            self.stack[0xC],
+            self.stack[0xD],
+            self.stack[0xE],
+            self.stack[0xF],
         );
         trace!("sp = {:04X}", self.sp);
         trace!("keycode = {:02X}", self.keycode);
