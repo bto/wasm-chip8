@@ -19,11 +19,11 @@
     "chip8"
   ],
   "scripts": {
-    "build": "webpack",
-    "build:prod": "webpack --config config/webpack.prod.js",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack",
+    "build:prod": "NODE_OPTIONS=--openssl-legacy-provider webpack --config config/webpack.prod.js",
     "lint": "eslint .",
-    "start": "webpack-dev-server -d",
-    "watch": "webpack --watch"
+    "start": "NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server -d",
+    "watch": "NODE_OPTIONS=--openssl-legacy-provider webpack --watch"
   },
   "devDependencies": {
     "@types/react": "<16.14",
